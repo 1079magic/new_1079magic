@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1079Magic — Bear Formation Optimizer</title>
+  <meta name="description" content="Optimize your Kingshot bear rally formations with Magic Ratio and Option-A. Free, data-driven troop composition engine.">
+  <meta name="theme-color" content="#06080d">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- OpenGraph -->
+  <meta property="og:title" content="1079Magic — Bear Formation Optimizer">
+  <meta property="og:description" content="Optimize your Kingshot bear rally formations with Magic Ratio and Option-A.">
+  <meta property="og:image" content="https://1079magic.netlify.app/assets/signature.jpg">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://1079magic.netlify.app/">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="1079Magic — Bear Formation Optimizer">
+  <meta name="twitter:description" content="Optimize your Kingshot bear rally formations.">
+  <meta name="twitter:image" content="https://1079magic.netlify.app/assets/signature.jpg">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon1.png">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Plotly for ternary chart (Option-A) -->
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" defer></script>
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "1079Magic",
+    "description": "Bear rally formation optimizer for Kingshot",
+    "url": "https://1079magic.netlify.app/",
+    "applicationCategory": "GameApplication",
+    "operatingSystem": "Web"
+  }
+  </script>
+</head>
+<body>
+  <!-- Ambient Effects -->
+  <div class="ambient-bg" aria-hidden="true"></div>
+  <div class="grid-overlay" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+
+  <div class="app-container">
+
+    <!-- ═══════════ HERO ═══════════ -->
+    <section class="hero" role="banner">
+      <div class="hero-glow" aria-hidden="true"></div>
+
+      <div class="hero-badge">
+        <span class="dot"></span>
+        <span>V2 · Formation Engine</span>
+      </div>
+
+      <div class="hero-image-wrapper">
+        <img src="assets/signature.jpg" alt="1079 Kingdom" class="hero-image" width="140" height="140" loading="eager">
+      </div>
+
+      <h1 class="hero-title">
+        <span class="gradient-text">1079Magic</span>
+      </h1>
+      <p class="hero-subtitle">Bear formation optimizer for Kingshot — Magic Ratio & Option-A</p>
+    </section>
+
+    <!-- ═══════════ MODE TABS ═══════════ -->
+    <nav class="mode-tabs" role="tablist" aria-label="Calculator mode">
+      <button class="mode-tab active" role="tab" aria-selected="true" data-tab="input" id="tab-input">
+        <span class="tab-icon">📊</span>
+        <span>Stats Input</span>
+      </button>
+      <button class="mode-tab" role="tab" aria-selected="false" data-tab="magic" id="tab-magic">
+        <span class="tab-icon">✨</span>
+        <span>Magic Ratio</span>
+      </button>
+      <button class="mode-tab" role="tab" aria-selected="false" data-tab="optiona" id="tab-optiona">
+        <span class="tab-icon">⚡</span>
+        <span>Option-A</span>
+      </button>
+    </nav>
+
+    <!-- ═══════════ TAB: STATS INPUT ═══════════ -->
+    <div class="tab-panel" id="panel-input" role="tabpanel" aria-labelledby="tab-input">
+
+      <!-- How to collect stats -->
+      <div class="glass-card animate-in">
+        <button class="collapsible-trigger" id="howto-trigger" aria-expanded="false" aria-controls="howto-content">
+          <span style="display:flex;align-items:center;gap:8px">
+            <span>📐</span>
+            <span>How to collect troop stats</span>
+          </span>
+          <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="collapsible-content" id="howto-content">
+          <div class="info-steps" style="padding-top:16px">
+            <div class="info-step">
+              <span class="step-num">1</span>
+              <span class="step-text">Start a rally on <strong>Terror</strong> using your strongest heroes (same as for Bear), at full capacity.</span>
+            </div>
+            <div class="info-step">
+              <span class="step-num">2</span>
+              <span class="step-text">Open battle reports → find the Terror rally → screenshot the <strong>Bonus Details</strong> section and import, or manually enter <strong>Infantry / Cavalry / Archers</strong> – Attack% & Lethality%.</span>
+            </div>
+            <div class="info-step">
+              <span class="step-num">3</span>
+              <span class="step-text">Open your in-game <strong>Squad</strong> screen → screenshot troop amounts → import or manually type the troop numbers below.</span>
+            </div>
+            <div class="info-step">
+              <span class="step-num">4</span>
+              <span class="step-text">Go to <strong>Squad → Formation</strong> to check your rally size.</span>
+            </div>
+            <div class="info-step">
+              <span class="step-num">5</span>
+              <span class="step-text">Use the <strong>"Import from screenshot"</strong> button or enter all values manually.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Validation -->
+      <div class="validation-box" id="validationBox" role="alert">
+        <ul id="validationList"></ul>
+      </div>
+
+      <!-- Import -->
+      <div class="glass-card animate-in animate-in-delay-1">
+        <div class="section-header">
+          <div class="section-icon cyan">📸</div>
+          <div>
+            <div class="section-title">Import from Screenshot</div>
+            <div class="section-desc">Upload battle report or squad screenshot</div>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+          <label class="import-zone" id="import-stats-zone">
+            <div class="import-icon">📄</div>
+            <div class="import-label">Stats Screenshot</div>
+            <input type="file" accept="image/*" id="import-stats-file" style="display:none">
+          </label>
+          <label class="import-zone" id="import-troops-zone">
+            <div class="import-icon">🪖</div>
+            <div class="import-label">Troops Screenshot</div>
+            <input type="file" accept="image/*" id="import-troops-file" style="display:none">
+          </label>
+        </div>
+        <div id="ocr-status" style="display:none; margin-top:12px; font-size:0.82rem; color:var(--text-muted)"></div>
+      </div>
+
+      <!-- Infantry Stats -->
+      <div class="glass-card animate-in animate-in-delay-2">
+        <div class="section-header">
+          <div class="section-icon amber">🗡️</div>
+          <div>
+            <div class="section-title">Hero Combat Stats</div>
+            <div class="section-desc">Enter your bonus details from Terror rally</div>
+          </div>
+        </div>
+
+        <!-- Infantry -->
+        <div class="troop-header">
+          <span class="troop-emoji">⚔️</span>
+          <span>Infantry</span>
+        </div>
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="inf_atk"><span class="label-icon">📈</span> Attack</label>
+            <input type="number" class="form-input" id="inf_atk" placeholder="e.g. 350" step="any" min="0">
+            <span class="form-suffix">%</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="inf_let"><span class="label-icon">💀</span> Lethality</label>
+            <input type="number" class="form-input" id="inf_let" placeholder="e.g. 120" step="any" min="0">
+            <span class="form-suffix">%</span>
+          </div>
+        </div>
+
+        <!-- Cavalry -->
+        <div class="troop-header">
+          <span class="troop-emoji">🐎</span>
+          <span>Cavalry</span>
+        </div>
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="cav_atk"><span class="label-icon">📈</span> Attack</label>
+            <input type="number" class="form-input" id="cav_atk" placeholder="e.g. 310" step="any" min="0">
+            <span class="form-suffix">%</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="cav_let"><span class="label-icon">💀</span> Lethality</label>
+            <input type="number" class="form-input" id="cav_let" placeholder="e.g. 100" step="any" min="0">
+            <span class="form-suffix">%</span>
+          </div>
+        </div>
+
+        <!-- Archers -->
+        <div class="troop-header">
+          <span class="troop-emoji">🏹</span>
+          <span>Archers</span>
+        </div>
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="arc_atk"><span class="label-icon">📈</span> Attack</label>
+            <input type="number" class="form-input" id="arc_atk" placeholder="e.g. 400" step="any" min="0">
+            <span class="form-suffix">%</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="arc_let"><span class="label-icon">💀</span> Lethality</label>
+            <input type="number" class="form-input" id="arc_let" placeholder="e.g. 160" step="any" min="0">
+            <span class="form-suffix">%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tier + Troop counts -->
+      <div class="glass-card animate-in animate-in-delay-3">
+        <div class="section-header">
+          <div class="section-icon green">🪖</div>
+          <div>
+            <div class="section-title">Troop Inventory</div>
+            <div class="section-desc">Your available troops and formation settings</div>
+          </div>
+        </div>
+
+        <div class="form-grid" style="grid-template-columns: 1fr;">
+          <div class="form-group">
+            <label class="form-label" for="tier"><span class="label-icon">⭐</span> Troop Tier</label>
+            <select class="form-select" id="tier">
+              <option value="T6">T6</option>
+              <option value="T9">T9</option>
+              <option value="T10" selected>T10</option>
+              <option value="T10.TG1">T10.TG1</option>
+              <option value="T10.TG2">T10.TG2</option>
+              <option value="T10.TG3">T10.TG3</option>
+              <option value="T10.TG4">T10.TG4</option>
+              <option value="T10.TG5">T10.TG5</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="troop-header mt-lg">
+          <span class="troop-emoji">📦</span>
+          <span>Available Troops</span>
+        </div>
+        <div class="form-grid" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="form-group">
+            <label class="form-label" for="stock_inf"><span class="label-icon">⚔️</span> Infantry</label>
+            <input type="number" class="form-input" id="stock_inf" placeholder="e.g. 200000" min="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="stock_cav"><span class="label-icon">🐎</span> Cavalry</label>
+            <input type="number" class="form-input" id="stock_cav" placeholder="e.g. 200000" min="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="stock_arc"><span class="label-icon">🏹</span> Archers</label>
+            <input type="number" class="form-input" id="stock_arc" placeholder="e.g. 300000" min="0">
+          </div>
+        </div>
+
+        <div class="troop-header mt-lg">
+          <span class="troop-emoji">⚙️</span>
+          <span>Formation Settings</span>
+        </div>
+        <div class="form-grid" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="form-group">
+            <label class="form-label" for="rallyCap">
+              <span class="label-icon">📐</span> Rally Size
+              <span class="tooltip-trigger">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                <span class="tooltip-text">Your call rally capacity — check in Squad → Formation</span>
+              </span>
+            </label>
+            <input type="number" class="form-input" id="rallyCap" placeholder="e.g. 65000" min="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="joinCap">
+              <span class="label-icon">🤝</span> Join Cap
+              <span class="tooltip-trigger">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                <span class="tooltip-text">Max troops you can send when joining someone else's rally</span>
+              </span>
+            </label>
+            <input type="number" class="form-input" id="joinCap" placeholder="e.g. 65000" min="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="numMarches">
+              <span class="label-icon">#️⃣</span> Marches
+            </label>
+            <input type="number" class="form-input" id="numMarches" placeholder="e.g. 3" min="1" max="20" value="3">
+          </div>
+        </div>
+      </div>
+
+      <!-- Compute Buttons -->
+      <div style="display:flex; gap:12px; margin-top:8px;" class="animate-in animate-in-delay-4">
+        <button class="btn btn-primary btn-lg btn-full" id="btn-magic" type="button">
+          <span>✨</span>
+          <span>Compute Magic Ratio</span>
+        </button>
+        <button class="btn btn-secondary btn-lg btn-full" id="btn-optiona" type="button">
+          <span>⚡</span>
+          <span>Compute Option-A</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══════════ TAB: MAGIC RATIO ═══════════ -->
+    <div class="tab-panel hidden" id="panel-magic" role="tabpanel" aria-labelledby="tab-magic">
+
+      <!-- Explanation -->
+      <div class="glass-card">
+        <button class="collapsible-trigger" id="magic-explain-trigger" aria-expanded="false">
+          <span style="display:flex;align-items:center;gap:8px">
+            <span>💡</span>
+            <span>What is Magic Ratio?</span>
+          </span>
+          <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="collapsible-content" id="magic-explain-content">
+          <div class="info-card mt-md">
+            <h4>💚 Balanced Simulation Engine</h4>
+            <p>Tests all formation combinations to find the best 10 call/join ratios with highest total score.</p>
+            <p>• Runs damage simulation on all possible ratios<br>
+               • Calculates best 10 combinations<br>
+               • Shows scoreboard sorted by total damage<br>
+               • Recommends optimal march count<br>
+               • Auto-fills your call rally & join formations</p>
+            <p><span class="tag green">FOCUS mode</span> Reduces archers in CALL rally to maximize JOIN rally archer count (you join 2× per 5-min window = 2× damage!)</p>
+            <p><strong>💡 Tip:</strong> If you JOIN ≥ 45–50× per bear, use FOCUS mode to reduce archers in CALL and maximize JOIN archer count for 2× damage boost!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Focus Toggle -->
+      <div class="focus-toggle" id="magic-focus-toggle">
+        <div class="toggle-track"><div class="toggle-knob"></div></div>
+        <span class="toggle-label">FOCUS Mode — Maximize archer JOIN damage</span>
+      </div>
+
+      <!-- Loading -->
+      <div id="magic-loading" class="glass-card text-center" style="display:none; padding:40px;">
+        <div style="font-size:2rem; margin-bottom:12px;">✨</div>
+        <div style="color:var(--text-secondary); font-size:0.9rem;">Computing Magic Ratio...</div>
+        <div class="skeleton" style="width:200px; height:8px; margin:16px auto 0;"></div>
+      </div>
+
+      <!-- Results -->
+      <div id="magic-results" class="result-panel">
+
+        <!-- Compositions -->
+        <div class="glass-card glow">
+          <div class="section-header">
+            <div class="section-icon amber">🎯</div>
+            <div>
+              <div class="section-title">Optimal Compositions</div>
+            </div>
+          </div>
+
+          <div style="font-size:0.82rem; color:var(--text-muted); margin-bottom:8px; font-weight:500;">Call Rally</div>
+          <div class="comp-display" id="magic-call-comp"></div>
+
+          <div style="font-size:0.82rem; color:var(--text-muted); margin-bottom:8px; margin-top:16px; font-weight:500;">Join Rallies</div>
+          <div class="comp-display" id="magic-join-comp"></div>
+
+          <!-- Recommended marches -->
+          <div style="margin-top:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+            <div>
+              <div style="font-size:0.82rem; color:var(--text-muted); margin-bottom:4px;">Recommended Marches</div>
+              <div class="march-display" id="magic-rec-marches">—</div>
+            </div>
+            <button class="btn btn-success" id="magic-use-rec" style="display:none;">🔥 Use Recommended</button>
+          </div>
+
+          <!-- Score simulator -->
+          <div class="sim-box mt-lg" id="magic-sim-box" style="display:none;"></div>
+
+          <!-- Inventory result -->
+          <div class="mt-md" id="magic-inventory-result"></div>
+        </div>
+
+        <!-- Scoreboard -->
+        <div class="glass-card">
+          <div class="section-header">
+            <div class="section-icon purple">📋</div>
+            <div>
+              <div class="section-title">Scoreboard</div>
+              <div class="section-desc">Top 10 formations ranked by total damage</div>
+            </div>
+          </div>
+          <div class="scoreboard-wrap">
+            <table class="scoreboard" id="magic-scoreboard">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Call Formation</th>
+                  <th>Call Score</th>
+                  <th>Join Formation</th>
+                  <th>Join Score</th>
+                  <th>Total Score</th>
+                </tr>
+              </thead>
+              <tbody id="magic-scoreboard-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ TAB: OPTION-A ═══════════ -->
+    <div class="tab-panel hidden" id="panel-optiona" role="tabpanel" aria-labelledby="tab-optiona">
+
+      <!-- Explanation -->
+      <div class="glass-card">
+        <button class="collapsible-trigger" id="oa-explain-trigger" aria-expanded="false">
+          <span style="display:flex;align-items:center;gap:8px">
+            <span>💡</span>
+            <span>What is Option-A?</span>
+          </span>
+          <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="collapsible-content" id="oa-explain-content">
+          <div class="info-card mt-md">
+            <h4>🏹 Plot & Formation Optimizer</h4>
+            <p>Analyzes your hero stats (ATK%, Lethal%) to generate optimal CALL formation for max points.</p>
+            <p>• Shows interactive ternary plot to adjust your preference<br>
+               • Calculates recommended call troop ratio<br>
+               • Spreads remaining troops equally across JOIN marches<br>
+               • Fills remaining cap with infantry</p>
+            <p><span class="tag green">FOCUS mode</span> Maximizes ARCHER in CALL (your strongest stat), equal Cav/Arc in JOINs, fill rest with Infantry.</p>
+            <p><strong>💡 Tip:</strong> If you JOIN ≤ 45–50× per bear, use Option-A to maximize your CALL rally score with the best troop ratio!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Focus Toggle -->
+      <div class="focus-toggle" id="oa-focus-toggle">
+        <div class="toggle-track"><div class="toggle-knob"></div></div>
+        <span class="toggle-label">FOCUS Mode — Maximize archer CALL damage</span>
+      </div>
+
+      <!-- Loading -->
+      <div id="oa-loading" class="glass-card text-center" style="display:none; padding:40px;">
+        <div style="font-size:2rem; margin-bottom:12px;">⚡</div>
+        <div style="color:var(--text-secondary); font-size:0.9rem;">Computing Option-A...</div>
+        <div class="skeleton" style="width:200px; height:8px; margin:16px auto 0;"></div>
+      </div>
+
+      <!-- Results -->
+      <div id="oa-results" class="result-panel">
+
+        <div class="glass-card glow">
+          <div class="section-header">
+            <div class="section-icon cyan">📊</div>
+            <div>
+              <div class="section-title">Ternary Plot</div>
+              <div class="section-desc">Interactive optimization surface</div>
+            </div>
+          </div>
+          <div class="chart-container" id="oa-plot" style="height:420px;"></div>
+        </div>
+
+        <div class="glass-card glow">
+          <div class="section-header">
+            <div class="section-icon amber">🎯</div>
+            <div>
+              <div class="section-title">Optimal Formation</div>
+            </div>
+          </div>
+
+          <div style="font-size:0.82rem; color:var(--text-muted); margin-bottom:8px; font-weight:500;">Call Composition (Inf / Cav / Arc)</div>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <input type="text" class="form-input" id="oa-comp-call" style="max-width:200px; font-family:var(--font-mono);" placeholder="8/10/82">
+            <span class="tooltip-trigger">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span class="tooltip-text">Edit to adjust call formation ratios</span>
+            </span>
+          </div>
+          <div class="comp-display mt-md" id="oa-call-comp"></div>
+
+          <div style="font-size:0.82rem; color:var(--text-muted); margin-bottom:8px; margin-top:16px; font-weight:500;">Join Composition (Inf / Cav / Arc)</div>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <input type="text" class="form-input" id="oa-comp-join" style="max-width:200px; font-family:var(--font-mono);" placeholder="50/25/25">
+            <span class="tooltip-trigger">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span class="tooltip-text">Edit to adjust join formation ratios</span>
+            </span>
+          </div>
+          <div class="comp-display mt-md" id="oa-join-comp"></div>
+
+          <!-- Recommended marches -->
+          <div style="margin-top:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+            <div>
+              <div style="font-size:0.82rem; color:var(--text-muted); margin-bottom:4px;">Recommended Marches</div>
+              <div class="march-display" id="oa-rec-marches">—</div>
+            </div>
+            <button class="btn btn-success" id="oa-use-rec" style="display:none;">🔥 Use Recommended</button>
+          </div>
+
+          <!-- Target fractions -->
+          <div class="mt-md" id="oa-target-fracs"></div>
+
+          <!-- Inventory result -->
+          <div class="mt-md" id="oa-inventory-result"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ FOOTER ═══════════ -->
+    <footer class="site-footer">
+      <div class="footer-cta">
+        <h3>🐻 Thank You! 🎯</h3>
+        <p>Thanks for using 1079Magic — crush that bear! 🏆</p>
+        <p style="font-size:0.85rem; color:var(--text-muted);">This tool is free and built with love for the Kingshot community. If you find it useful, consider supporting on Patreon.</p>
+        <a href="https://www.patreon.com/15651923/join" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="margin-top:12px;">
+          ❤️ Support on Patreon
+        </a>
+      </div>
+      <div class="footer-links">
+        <a href="disclaimer.html">Disclaimer</a>
+        <a href="privacy.html">Privacy & GDPR</a>
+      </div>
+      <div class="footer-credit">
+        <p>1079Magic is an independent, fan-made tool for Kingshot. Not affiliated with the game's developers.</p>
+        <p>© 2026 1079Magic — Created by Cro_Baby_Shark. Special thanks to BladeXtreme!</p>
+      </div>
+    </footer>
+
+  </div><!-- /.app-container -->
+
+  <!-- ═══════════ SCRIPTS ═══════════ -->
+  <script src="js/ui.js"></script>
+  <script src="js/magic.js"></script>
+  <script src="js/optiona.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
