@@ -1,529 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>1079Magic — Bear Formation Optimizer</title>
-  <meta name="description" content="Optimize your Kingshot bear rally formations with Magic Ratio and Option-A.">
-  <meta name="theme-color" content="#06080d">
-  <meta property="og:title" content="1079Magic — Bear Formation Optimizer">
-  <meta property="og:image" content="https://1079magic.netlify.app/assets/signature.jpg">
-  <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="shortcut icon" href="favicon.ico">
-  <link rel="apple-touch-icon" href="apple-touch-icon1.png">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
-  <style>
-:root{--bg:#06080d;--panel:rgba(17,24,39,0.7);--text:#f1f5f9;--dim:#94a3b8;--mut:#64748b;--accent:#f59e0b;--accent-lt:#fbbf24;--cyan:#06b6d4;--emerald:#10b981;--red:#ef4444;--border:rgba(255,255,255,0.06);--bdr-acc:rgba(245,158,11,0.3);--field:rgba(15,23,42,0.6);--font:'Outfit',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;--R:16px;--Rs:12px;--Rss:8px;--ease:cubic-bezier(.16,1,.3,1)}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1079Magic — Bear Formation Optimizer</title>
+<meta name="description" content="Optimize your Kingshot bear rally formations with Magic Ratio and Option-A.">
+<meta name="theme-color" content="#080b14">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta property="og:title" content="1079Magic — Bear Formation Optimizer">
+<meta property="og:description" content="Optimize your Kingshot bear rally formations.">
+<meta property="og:image" content="https://1079magic.netlify.app/assets/signature.jpg">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon1.png">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<style>
+:root{--bg:#080b14;--panel:rgba(13,18,30,.72);--text:#edf0f7;--dim:#8490a7;--mut:#5c6882;--gold:#f5a623;--gold-lt:#fcd97a;--gold-dk:#c48820;--cyan:#38bdf8;--emerald:#34d399;--red:#fb7185;--accent:#f5a623;--accent-hover:#c48820;--border:rgba(255,255,255,.06);--bdr-acc:rgba(245,166,35,.16);--field:rgba(12,16,28,.6);--ok:#10b981;--ok-hover:#059669;--font:'Outfit',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;--R:14px;--ease:cubic-bezier(.16,1,.3,1);--muted:#8490a7;--muted-color:#8490a7}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{background:var(--bg);-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;overflow-x:hidden}
-::selection{background:rgba(245,158,11,.2)}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:99px}
+html{background:var(--bg);height:100%;-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);background-image:radial-gradient(ellipse 50% 35% at 50% 0%,rgba(245,166,35,.04) 0%,transparent 100%),radial-gradient(ellipse 50% 40% at 80% 70%,rgba(56,189,248,.02) 0%,transparent 100%);color:var(--text);min-height:100%;line-height:1.55;overflow-x:hidden}
+::selection{background:rgba(245,166,35,.22);color:var(--gold-lt)}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:99px}
 .ambient-bg{position:fixed;inset:0;z-index:0;pointer-events:none}
-.ambient-bg::before{content:'';position:absolute;inset:-50%;width:200%;height:200%;background:radial-gradient(ellipse 600px 400px at 20% 20%,rgba(245,158,11,.07),transparent 70%),radial-gradient(ellipse 500px 500px at 80% 60%,rgba(6,182,212,.05),transparent 70%);animation:af 20s ease-in-out infinite alternate}
-@keyframes af{0%{transform:translate(0,0)}100%{transform:translate(20px,-15px)}}
-.noise{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.025;background-size:200px}
-.app-container{position:relative;z-index:2;max-width:820px;margin:0 auto;padding:0 12px}
-.hero{padding:36px 0 20px;text-align:center;position:relative}
-.hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,.1),transparent 70%);filter:blur(50px);pointer-events:none;z-index:-1}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:5px 14px;border-radius:99px;background:rgba(245,158,11,.08);border:1px solid var(--bdr-acc);font-size:.76rem;font-weight:500;color:var(--accent-lt);margin-bottom:14px}
-.hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pl 2s ease-in-out infinite}
-@keyframes pl{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
-.hero-image{width:110px;height:110px;border-radius:var(--R);object-fit:cover;border:2px solid var(--bdr-acc);box-shadow:0 0 0 5px rgba(245,158,11,.05),0 0 30px rgba(245,158,11,.08);margin-bottom:14px;transition:transform .3s var(--ease)}
-.hero-image:hover{transform:scale(1.04) rotate(1deg)}
-.hero-title{font-size:clamp(1.7rem,5vw,2.4rem);font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:4px}
-.gradient-text{background:linear-gradient(135deg,var(--accent-lt),var(--accent),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-subtitle{font-size:.92rem;color:var(--dim);max-width:420px;margin:0 auto}
-.glass-card,.panel{background:var(--panel);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--border);border-radius:var(--R);padding:16px 14px;margin-bottom:12px;box-shadow:0 2px 14px rgba(0,0,0,.28);transition:border-color .2s}
-.glass-card:hover,.panel:hover{border-color:rgba(255,255,255,.08)}
-.section-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.section-icon{width:36px;height:36px;border-radius:var(--Rs);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
-.section-icon.cyan{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2)}
-.section-title{font-size:.98rem;font-weight:700}.section-desc{font-size:.78rem;color:var(--mut);margin-top:1px}
-.collapsible-trigger{display:flex;align-items:center;justify-content:space-between;width:100%;padding:10px 12px;border-radius:var(--Rs);border:1px solid var(--border);background:rgba(17,24,39,.35);color:var(--text);font-family:var(--font);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s}
-.collapsible-trigger:hover{background:rgba(17,24,39,.55)}
-.collapsible-trigger .chevron{transition:transform .25s var(--ease);color:var(--mut)}
-.collapsible-trigger.open .chevron{transform:rotate(180deg)}
-.collapsible-content{max-height:0;overflow:hidden;opacity:0;transition:max-height .4s var(--ease),opacity .25s}
-.collapsible-content.open{max-height:2000px;opacity:1}
-.import-zone{border:2px dashed rgba(255,255,255,.08);border-radius:var(--Rs);padding:16px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(15,23,42,.12)}
-.import-zone:hover{border-color:var(--accent);background:rgba(245,158,11,.04)}
-.import-zone .import-icon{font-size:1.6rem;margin-bottom:4px}.import-zone .import-label{font-size:.78rem;color:var(--dim);font-weight:500}
-label{display:block;margin:3px 0 2px;color:var(--dim);font-size:.72rem;font-weight:500}
-input,select{width:100%;padding:7px 9px;border-radius:var(--Rss);border:1px solid var(--border);background:var(--field);color:var(--text);font-size:.84rem;font-family:var(--mono);font-weight:500;outline:none;transition:border-color .15s,box-shadow .15s}
-input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(245,158,11,.08)}
-input::placeholder{color:rgba(100,116,139,.4);font-family:var(--font)}
-select{font-family:var(--font);cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
-select option{background:#111827}
-.input-wrapper{margin-bottom:1px}
+.ambient-bg::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse 500px 350px at 20% 20%,rgba(245,166,35,.06) 0%,transparent 70%),radial-gradient(ellipse 400px 400px at 80% 60%,rgba(56,189,248,.04) 0%,transparent 70%);animation:ambFloat 20s ease-in-out infinite alternate}
+@keyframes ambFloat{0%{transform:translate(0,0)}50%{transform:translate(20px,-15px)}100%{transform:translate(-10px,10px)}}
+.noise{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.025;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px}
+.app-container{position:relative;z-index:2;max-width:780px;margin:0 auto;padding:0 10px}
+.hero{position:relative;padding:28px 0 14px;text-align:center}
+.hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(245,166,35,.07) 0%,transparent 70%);filter:blur(40px);pointer-events:none;z-index:-1}
+.hero-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:rgba(245,166,35,.05);border:1px solid var(--bdr-acc);font-size:.7rem;font-weight:500;color:var(--gold-lt);margin-bottom:8px}
+.hero-badge .dot{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:pd 2s ease-in-out infinite}
+@keyframes pd{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.hero-image{width:85px;height:85px;border-radius:14px;object-fit:cover;border:1.5px solid var(--bdr-acc);box-shadow:0 0 24px rgba(245,166,35,.07);margin-bottom:8px;transition:transform .3s var(--ease)}
+.hero-image:hover{transform:scale(1.05) rotate(1deg)}
+.hero-title{font-size:clamp(1.6rem,5vw,2.4rem);font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:3px}
+.gradient-text{background:linear-gradient(135deg,var(--gold-lt),var(--gold),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-subtitle{font-size:.85rem;color:var(--dim);font-weight:400}
+.panel,.glass-card{background:var(--panel);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--border);border-radius:var(--R);padding:14px 11px;margin-bottom:12px;box-shadow:0 2px 14px rgba(0,0,0,.28);transition:border-color .2s}
+h2{margin:0 0 8px;font-size:1rem;font-weight:700;letter-spacing:-.02em}
+h3{font-weight:700;letter-spacing:-.01em;font-size:.82rem}
+label{display:block;margin:3px 0 1px;color:var(--dim);font-size:.7rem;font-weight:500}
+input,select{width:100%;padding:7px 8px;border-radius:6px;border:1px solid var(--border);background:var(--field);color:var(--text);font-size:.82rem;font-family:var(--mono);font-weight:500;outline:none;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(245,166,35,.08)}
+input::placeholder{color:rgba(132,144,167,.35);font-family:var(--font)}
+select{font-family:var(--font);cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238490a7' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center}
+select option{background:#0d121e;color:var(--text)}
+.input-wrapper{margin-bottom:0}
 .grid{display:grid;gap:6px}
-.grid-stats{grid-template-columns:repeat(3,1fr)!important;gap:5px!important}
-.grid-stats h3{font-size:.72rem;margin:0 0 2px;color:var(--accent-lt);text-transform:uppercase;letter-spacing:.04em;font-weight:700}
-.grid-stats label{font-size:.65rem;margin:2px 0 1px}.grid-stats input{padding:6px 7px;font-size:.8rem}
-.grid-two{grid-template-columns:repeat(2,1fr)!important;gap:5px!important}
-.grid-two label{font-size:.65rem;margin:2px 0 1px}.grid-two input,.grid-two select{padding:6px 7px;font-size:.8rem}
-.grid-section-title{font-size:.74rem;margin:0 0 2px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.03em}
-.button-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:6px 0 14px}
-.big-button{padding:13px 26px;border-radius:var(--Rs);border:none;font-size:.92rem;font-family:var(--font);font-weight:700;cursor:pointer;color:#fff;min-width:150px;transition:transform .18s var(--ease),box-shadow .2s;position:relative;overflow:hidden}
-.big-button::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.08),transparent 50%);pointer-events:none}
+.grid-stats{grid-template-columns:repeat(3,1fr)!important;gap:4px!important}
+.grid-stats>div{background:rgba(255,255,255,.012);border:1px solid var(--border);border-radius:7px;padding:6px 5px 8px;transition:border-color .2s}
+.grid-stats>div:nth-child(1):hover{border-color:rgba(251,113,133,.18)}.grid-stats>div:nth-child(2):hover{border-color:rgba(56,189,248,.18)}.grid-stats>div:nth-child(3):hover{border-color:rgba(52,211,153,.18)}
+.grid-stats h3{font-size:.67rem;margin:0 0 1px;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+.grid-stats>div:nth-child(1) h3{color:var(--red)}.grid-stats>div:nth-child(2) h3{color:var(--cyan)}.grid-stats>div:nth-child(3) h3{color:var(--emerald)}
+.grid-stats label{font-size:.62rem;margin:1px 0 0}.grid-stats input{padding:5px 5px;font-size:.78rem}
+.grid-two{grid-template-columns:repeat(2,1fr)!important;gap:4px!important}
+.grid-two>div{background:rgba(255,255,255,.012);border:1px solid var(--border);border-radius:7px;padding:6px 5px 8px}
+.grid-two label{font-size:.62rem;margin:1px 0 0}.grid-two input,.grid-two select{padding:5px 5px;font-size:.78rem}
+.grid-section-title{font-size:.7rem;margin:0 0 1px;text-transform:uppercase;letter-spacing:.04em;font-weight:700;color:var(--gold)}
+.grid-two>div:last-child .grid-section-title{color:var(--cyan)}
+.import-zone{border:1.5px dashed rgba(255,255,255,.09);border-radius:8px;padding:12px 6px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(12,16,28,.25)}
+.import-zone:hover{border-color:var(--gold);background:rgba(245,166,35,.03)}
+.import-zone .import-icon{font-size:1.3rem;margin-bottom:2px}.import-zone .import-label{font-size:.7rem;color:var(--dim);font-weight:500}
+.button-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:4px 0 14px}
+.big-button{padding:13px 24px;border-radius:10px;border:none;font-size:.88rem;font-family:var(--font);font-weight:700;cursor:pointer;color:#fff;min-width:140px;transition:transform .18s var(--ease),box-shadow .2s;position:relative;overflow:hidden}
+.big-button::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.07) 0%,transparent 50%);pointer-events:none}
 .big-button:hover{transform:translateY(-2px)}.big-button:active{transform:scale(.97)}
-.magic-animated{background:linear-gradient(135deg,var(--emerald),#059669)!important;box-shadow:0 4px 16px rgba(16,185,129,.22)}
-.magic-animated:hover{box-shadow:0 6px 24px rgba(16,185,129,.32)}
-.optiona-animated{background:linear-gradient(135deg,var(--accent),#d97706)!important;box-shadow:0 4px 16px rgba(245,158,11,.22);color:#000}
-.optiona-animated:hover{box-shadow:0 6px 24px rgba(245,158,11,.32)}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:var(--Rs);border:none;font-family:var(--font);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s var(--ease)}.btn:active{transform:scale(.97)}
-.btn-primary{background:linear-gradient(135deg,var(--accent),#d97706);color:#000;box-shadow:0 4px 14px rgba(245,158,11,.22)}
-.btn-primary:hover{box-shadow:0 6px 20px rgba(245,158,11,.32);transform:translateY(-1px)}
-.btn-lg{padding:13px 26px;font-size:.92rem}
-.validation-summary{display:none;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:var(--Rs);padding:10px 12px;margin-bottom:10px}
-.validation-summary.visible{display:block}
-.validation-summary-title{font-weight:700;color:var(--red);margin-bottom:4px;font-size:.8rem}
-.validation-summary ul{margin:0;padding-left:14px;color:rgba(239,68,68,.8)}.validation-summary li{font-size:.78rem;margin-bottom:2px}
-.error-message{color:var(--red);font-size:.68rem;min-height:0}
-input.input-error{border-color:var(--red)!important;box-shadow:0 0 0 2px rgba(239,68,68,.1)!important}
-.sub-panel{margin-top:10px;padding:12px;border-radius:var(--Rs);border:1px solid var(--border);background:rgba(10,14,24,.4);overflow-x:auto}
-.sub-panel-magic{margin-top:10px;padding:14px;border-radius:var(--Rs);border:1px solid rgba(16,185,129,.12);background:linear-gradient(135deg,rgba(16,185,129,.04),rgba(6,182,212,.02));overflow-x:auto}
-.sub-panel-optiona{margin-top:10px;padding:14px;border-radius:var(--Rs);border:1px solid rgba(245,158,11,.12);background:linear-gradient(135deg,rgba(245,158,11,.04),rgba(239,68,68,.02));overflow-x:auto}
-.sub-panel-magic tr:hover td{background:rgba(16,185,129,.03)}
-.sub-panel-optiona tr:hover td{background:rgba(245,158,11,.03)}
-.pill{display:inline-block;padding:2px 9px;background:rgba(245,158,11,.06);border:1px solid var(--bdr-acc);border-radius:999px;font-size:.76rem;font-weight:600;color:var(--accent-lt);margin-bottom:3px}
-.muted{color:var(--dim)}.muted1{color:var(--accent-lt);font-weight:700;font-size:.86rem}
-.spinner{display:inline-block;width:18px;height:18px;border:2.5px solid rgba(245,158,11,.2);border-radius:50%;border-top-color:var(--accent);animation:sp .7s linear infinite}
-@keyframes sp{to{transform:rotate(360deg)}}
-.loading-indicator{display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:10;background:rgba(6,8,13,.95);backdrop-filter:blur(14px);padding:22px;border-radius:var(--R);border:1px solid var(--bdr-acc)}
-.loading-indicator.active{display:flex;flex-direction:column;align-items:center;gap:8px}
-.loading-text{color:var(--accent);font-weight:600;font-size:.85rem}
-.panel-wrapper{position:relative;min-height:40px}
-.panel-content.loading,.panel-content.computing{opacity:.15;pointer-events:none;filter:blur(3px);transition:all .3s}
-.tooltip-icon{display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.18);color:var(--accent);border-radius:50%;font-size:.58rem;font-weight:700;cursor:help;margin-left:2px;vertical-align:middle}
-#tt-bubble{display:none;position:fixed;z-index:9999;background:rgba(12,16,27,.96);backdrop-filter:blur(14px);color:var(--text);font-size:.74rem;font-family:var(--font);padding:6px 9px;border-radius:var(--Rss);border:1px solid var(--bdr-acc);max-width:220px;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.4);line-height:1.4}
-#tt-bubble.visible{display:block}
+.magic-animated{background:linear-gradient(135deg,#10b981,#059669,#0d9488)!important;box-shadow:0 3px 16px rgba(16,185,129,.22)}
+.magic-animated:hover{box-shadow:0 5px 24px rgba(16,185,129,.32)}
+.optiona-animated{background:linear-gradient(135deg,var(--gold),#e88c1a,#d97706)!important;box-shadow:0 3px 16px rgba(245,166,35,.22);color:#1a0e00}
+.optiona-animated:hover{box-shadow:0 5px 24px rgba(245,166,35,.32)}
+.btn{padding:7px 10px;border:0;border-radius:5px;color:#fff;font-size:.78rem;font-family:var(--font);font-weight:600;cursor:pointer;background:var(--gold);transition:all .15s}
+.btn:hover{background:var(--gold-dk)}.btn-ok{background:var(--ok)}.btn-ok:hover{background:var(--ok-hover)}.btn-row{display:flex;gap:6px;flex-wrap:wrap}
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-dk));color:#1a0e00;padding:10px 20px;border-radius:8px;font-size:.88rem;font-weight:700;text-decoration:none;display:inline-block;box-shadow:0 3px 14px rgba(245,166,35,.25);transition:all .2s var(--ease)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 5px 22px rgba(245,166,35,.35)}
+.inline-btn{padding:6px 10px;border:0;border-radius:5px;color:#fff;font-size:.74rem;font-family:var(--font);font-weight:600;cursor:pointer;transition:all .15s}
+.btn-magic{padding:6px 10px;border:1px solid rgba(16,185,129,.18);border-radius:5px;color:var(--emerald);font-size:.74rem;font-family:var(--font);font-weight:600;cursor:pointer;background:rgba(52,211,153,.05);transition:all .15s}.btn-magic:hover{background:rgba(52,211,153,.1)}
+.btn-optiona{padding:6px 10px;border:1px solid var(--bdr-acc);border-radius:5px;color:var(--gold);font-size:.74rem;font-family:var(--font);font-weight:600;cursor:pointer;background:rgba(245,166,35,.04);transition:all .15s}.btn-optiona:hover{background:rgba(245,166,35,.08)}
+.btn-magic-ok,.btn-optiona-ok{background:var(--ok);color:#fff}.btn-magic-row,.btn-optiona-row{display:flex;gap:6px;flex-wrap:wrap}
+.help-box{cursor:pointer;user-select:none}
+.help-title{cursor:pointer;font-size:.84rem;font-weight:600;color:var(--dim);transition:color .2s}
+.help-title::before{content:"▾ ";display:inline-block;transition:transform .25s var(--ease);margin-right:2px;color:var(--gold);font-size:.75em}
+.help-box.collapsed .help-title::before{transform:rotate(-90deg)}
+.help-section{max-height:1000px;overflow:hidden;transition:max-height .35s var(--ease),opacity .25s;opacity:1;margin-top:5px}
+.help-box.collapsed .help-section{max-height:0;opacity:0;margin-top:0}.help-title:hover{color:var(--gold)}
 .comp-override-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.comp-override-grid label{font-size:.7rem;display:block;margin-bottom:2px;color:var(--dim)}
-.comp-override-grid input{width:100%;padding:6px 7px;font-size:.78rem;font-family:var(--mono);border:1px solid var(--border);border-radius:var(--Rss);background:var(--field);color:var(--text);outline:none}
+.comp-override-grid label{font-size:.67rem;display:block;margin-bottom:1px}
+.comp-override-grid input{width:100%;padding:5px 5px;font-size:.78rem}
+#engine-magic,#engine-optiona{display:none}
 .info-expand{max-height:0;overflow:hidden;opacity:0;transition:max-height .4s var(--ease),opacity .3s}
 .info-expand.open{max-height:600px;opacity:1}
-.help-box{cursor:pointer;user-select:none}
-.help-title{cursor:pointer;font-size:.88rem;font-weight:600;color:var(--dim);transition:color .2s}
-.help-title::before{content:"\25BE ";color:var(--accent);font-size:.8em;margin-right:3px;display:inline-block;transition:transform .25s var(--ease)}
-.help-box.collapsed .help-title::before{transform:rotate(-90deg)}
-.help-section{max-height:1000px;overflow:hidden;transition:max-height .35s var(--ease),opacity .25s;opacity:1;margin-top:6px}
-.help-box.collapsed .help-section{max-height:0;opacity:0;margin-top:0}
-.help-title:hover{color:var(--accent)}
-.focus-switch{display:flex;align-items:center;gap:6px;margin:6px 0;padding:5px 9px;background:rgba(10,14,24,.3);border:1px solid var(--border);border-radius:var(--Rss);cursor:pointer}
-.focus-switch input[type="checkbox"]{accent-color:var(--emerald);width:14px;height:14px}
-.focus-switch label{cursor:pointer;font-size:.76rem;color:var(--dim);margin:0}
-#engine-magic,#engine-optiona{display:none}
-.inline-btn{padding:6px 11px;border:0;border-radius:var(--Rss);color:#fff;font-size:.78rem;font-family:var(--font);font-weight:600;cursor:pointer;transition:all .15s}
-.btn-magic{padding:6px 11px;border:1px solid rgba(16,185,129,.22);border-radius:var(--Rss);color:var(--emerald);font-size:.78rem;font-family:var(--font);font-weight:600;cursor:pointer;background:rgba(16,185,129,.06);transition:all .15s}.btn-magic:hover{background:rgba(16,185,129,.12)}
-.btn-optiona{padding:6px 11px;border:1px solid var(--bdr-acc);border-radius:var(--Rss);color:var(--accent);font-size:.78rem;font-family:var(--font);font-weight:600;cursor:pointer;background:rgba(245,158,11,.05);transition:all .15s}.btn-optiona:hover{background:rgba(245,158,11,.1)}
-.btn-magic-ok,.btn-optiona-ok{background:var(--emerald);color:#fff}
-.btn-magic-row,.btn-optiona-row{display:flex;gap:6px;flex-wrap:wrap}
-table{width:100%;border-collapse:collapse;font-size:.76rem;margin-top:6px;background:rgba(10,14,24,.3);border-radius:var(--Rss);overflow:hidden}
-th,td{padding:5px 7px;border-bottom:1px solid rgba(255,255,255,.04);text-align:right}
-th{font-size:.65rem;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;background:rgba(10,14,24,.35);white-space:nowrap}
-td{font-family:var(--mono);font-size:.74rem;color:var(--dim)}
-th:first-child,td:first-child{text-align:left}tr:last-child td{border-bottom:0}
+.sub-panel{margin-top:8px;padding:10px;border-radius:7px;border:1px solid var(--border);background:rgba(10,14,24,.35);overflow-x:auto}
+.sub-panel-magic{margin-top:8px;padding:10px;border-radius:7px;border:1px solid rgba(52,211,153,.1);background:linear-gradient(135deg,rgba(16,185,129,.035),rgba(6,182,212,.015));overflow-x:auto}
+.sub-panel-magic tr:hover td{background:rgba(52,211,153,.025)}
+.sub-panel-optiona{margin-top:8px;padding:10px;border-radius:7px;border:1px solid rgba(245,166,35,.1);background:linear-gradient(135deg,rgba(245,166,35,.035),rgba(251,113,133,.015));overflow-x:auto}
+.sub-panel-optiona tr:hover td{background:rgba(245,166,35,.025)}
+table{width:100%;border-collapse:collapse;margin-top:4px;background:rgba(10,14,24,.25);border-radius:5px;overflow:hidden;font-size:.72rem;table-layout:fixed}
+th,td{padding:4px 3px;border-bottom:1px solid rgba(255,255,255,.035);text-align:right;word-break:break-word;overflow:hidden;text-overflow:ellipsis}
+th{font-size:.58rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.03em;background:rgba(10,14,24,.35);white-space:nowrap}
+td{font-family:var(--mono);font-size:.68rem;color:var(--text)}
+th:first-child,td:first-child{text-align:left;width:24px;min-width:24px}
+tr:last-child td{border-bottom:0}
+.pill{display:inline-block;padding:2px 8px;background:rgba(245,166,35,.05);border:1px solid var(--bdr-acc);border-radius:999px;font-size:.72rem;font-weight:600;margin-bottom:2px;color:var(--gold-lt)}
+.muted{color:var(--muted-color)}.muted1{color:var(--gold-lt);font-weight:700;font-size:.84rem}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(245,166,35,.2);border-radius:50%;border-top-color:var(--gold);animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-indicator{display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:10;background:rgba(8,11,20,.95);backdrop-filter:blur(12px);padding:16px;border-radius:var(--R);border:1px solid var(--bdr-acc)}
+.loading-indicator.active{display:flex;flex-direction:column;align-items:center;gap:6px}
+.loading-text{color:var(--gold);font-weight:600;font-size:.8rem}
+.panel-wrapper{position:relative;min-height:30px}
+.panel-content.loading,.panel-content.computing{opacity:.15;pointer-events:none;filter:blur(3px);transition:all .3s}
+.tooltip-icon{display:inline-flex;align-items:center;justify-content:center;width:12px;height:12px;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.15);color:var(--gold);border-radius:50%;font-size:.55rem;font-weight:700;cursor:help;margin-left:1px;vertical-align:middle;transition:all .15s}
+.tooltip-icon:hover{background:rgba(245,166,35,.15);transform:scale(1.1)}
+#tt-bubble{display:none;position:fixed;z-index:9999;background:rgba(12,16,27,.96);backdrop-filter:blur(12px);color:var(--text);font-size:.7rem;font-family:var(--font);padding:5px 8px;border-radius:5px;border:1px solid var(--bdr-acc);max-width:200px;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.4);line-height:1.35}
+#tt-bubble.visible{display:block}
+.validation-summary{display:none;background:rgba(251,113,133,.05);border:1px solid rgba(251,113,133,.15);border-radius:7px;padding:7px 8px;margin-bottom:6px}
+.validation-summary.visible{display:block}
+.validation-summary-title{font-weight:700;color:var(--red);margin-bottom:2px;font-size:.76rem}
+.validation-summary ul{margin:0;padding-left:12px;color:rgba(251,113,133,.75)}
+.validation-summary li{margin-bottom:1px;font-size:.72rem}
+.error-message{color:var(--red);font-size:.65rem;min-height:0}
+input.input-error{border-color:var(--red)!important;box-shadow:0 0 0 2px rgba(251,113,133,.08)!important}
 #ternaryPlot{width:100%;height:1px!important;overflow:hidden;opacity:0;pointer-events:none;position:absolute}
-.site-footer{margin-top:32px;padding:20px 0;border-top:1px solid var(--border);text-align:center}
-.footer-links{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
-.footer-links a{color:var(--mut);font-size:.78rem;text-decoration:none;transition:color .15s}.footer-links a:hover{color:var(--text)}
-.footer-credit{color:var(--mut);font-size:.72rem;margin-top:10px;line-height:1.5}
-ol,ul{padding-left:14px}li{margin-bottom:2px;font-size:.82rem;color:var(--dim);line-height:1.45}li strong{color:var(--text)}
-@media(max-width:500px){.app-container{padding:0 6px}.hero{padding:24px 0 14px}.hero-image{width:80px;height:80px}.hero-title{font-size:1.5rem}.glass-card,.panel{padding:12px 9px}.grid-stats{gap:3px!important}.grid-stats h3{font-size:.65rem}.grid-stats input{padding:5px 5px;font-size:.76rem}.grid-stats label{font-size:.6rem}.grid-two{gap:3px!important}.grid-two input,.grid-two select{padding:5px 5px;font-size:.76rem}.grid-two label{font-size:.6rem}.big-button{min-width:110px;padding:11px 14px;font-size:.82rem}.import-zone{padding:12px 6px}.import-zone .import-icon{font-size:1.2rem}.import-zone .import-label{font-size:.7rem}table{font-size:.68rem}th,td{padding:4px 4px}th{font-size:.58rem}td{font-size:.66rem}}
-  </style>
+.focus-switch{display:flex;align-items:center;gap:5px;margin:4px 0;padding:5px 7px;background:rgba(10,14,24,.25);border:1px solid var(--border);border-radius:5px;cursor:pointer}
+.focus-switch:hover{border-color:rgba(255,255,255,.08)}
+.focus-switch input[type="checkbox"]{accent-color:var(--ok);width:13px;height:13px;flex-shrink:0}
+.focus-switch label{cursor:pointer;font-size:.72rem;color:var(--dim);margin:0}
+.site-footer{margin-top:24px;padding:14px 0;border-top:1px solid var(--border);text-align:center}
+.footer-links{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.footer-links a{color:var(--mut);font-size:.72rem;text-decoration:none;transition:color .15s}.footer-links a:hover{color:var(--text)}
+.footer-credit{color:var(--mut);font-size:.68rem;margin-top:6px;line-height:1.4}
+ol,ul{padding-left:12px}li{margin-bottom:1px;font-size:.78rem;color:var(--dim);line-height:1.4}li strong{color:var(--text)}
+@media(max-width:500px){.app-container{padding:0 5px}.hero{padding:18px 0 8px}.hero-image{width:65px;height:65px}.hero-title{font-size:1.3rem}.hero-subtitle{font-size:.74rem}.glass-card,.panel{padding:9px 7px}.grid-stats{gap:2px!important}.grid-stats>div{padding:4px 3px 6px}.grid-stats h3{font-size:.6rem}.grid-stats input{padding:4px 4px;font-size:.74rem}.grid-stats label{font-size:.55rem}.grid-two{gap:2px!important}.grid-two>div{padding:4px 3px 6px}.grid-two input,.grid-two select{padding:4px 4px;font-size:.74rem}.grid-two label{font-size:.55rem}.big-button{min-width:100px;padding:10px 12px;font-size:.8rem}.import-zone{padding:8px 4px}.import-zone .import-icon{font-size:1rem}.import-zone .import-label{font-size:.62rem}table{font-size:.62rem}th,td{padding:3px 2px}th{font-size:.52rem}td{font-size:.6rem}}
+</style>
 </head>
 <body>
 <div class="ambient-bg" aria-hidden="true"></div>
 <div class="noise" aria-hidden="true"></div>
 <div id="tt-bubble"></div>
 <div class="app-container">
-  <section class="hero">
-    <div class="hero-glow" aria-hidden="true"></div>
-    <div class="hero-badge"><span class="dot"></span><span>V2 · Formation Engine</span></div>
-    <div><img src="assets/signature.jpg" alt="1079" class="hero-image" width="110" height="110"></div>
-    <h1 class="hero-title"><span class="gradient-text">1079Magic</span></h1>
-    <p class="hero-subtitle">Bear formation optimizer — Magic Ratio & Option-A</p>
-  </section>
-  <section class="panel glass-card">
-    <h2>Troop Stats Input <span class="tooltip-icon" data-tooltip="Enter your hero attack % and lethality % from in-game hero setup">?</span></h2>
-    <div class="help-box collapsed"><div class="help-title">📊 How to collect troop stats:</div><div class="help-section"><ol><li>🎯 Rally on <strong>Terror</strong> with your strongest heroes.</li><li>📄 Screenshot <strong>Bonus Details</strong> and import, or enter manually.</li><li>🪖 Screenshot <strong>Squad</strong> troop amounts or type below.</li><li>📐 Check <strong>Squad → Formation</strong> for rally size.</li></ol></div></div>
-    <div id="validationSummary" class="validation-summary"><div class="validation-summary-title">⚠️ Validation Errors:</div><ul id="validationList"></ul></div>
-    <div class="grid grid-stats">
-      <div><h3>Infantry</h3><div class="input-wrapper"><label>Attack (%)<span class="tooltip-icon" data-tooltip="Infantry Attack %">?</span></label><input id="inf_atk" type="number" step="0.1" value="481.6"><div class="error-message" id="err_inf_atk"></div></div><div class="input-wrapper"><label>Lethality (%)<span class="tooltip-icon" data-tooltip="Infantry Lethality %">?</span></label><input id="inf_let" type="number" step="0.1" value="284.4"><div class="error-message" id="err_inf_let"></div></div></div>
-      <div><h3>Cavalry</h3><div class="input-wrapper"><label>Attack (%)<span class="tooltip-icon" data-tooltip="Cavalry Attack %">?</span></label><input id="cav_atk" type="number" step="0.1" value="501.3"><div class="error-message" id="err_cav_atk"></div></div><div class="input-wrapper"><label>Lethality (%)<span class="tooltip-icon" data-tooltip="Cavalry Lethality %">?</span></label><input id="cav_let" type="number" step="0.1" value="325.4"><div class="error-message" id="err_cav_let"></div></div></div>
-      <div><h3>Archers</h3><div class="input-wrapper"><label>Attack (%)<span class="tooltip-icon" data-tooltip="Archer Attack %">?</span></label><input id="arc_atk" type="number" step="0.1" value="509.9"><div class="error-message" id="err_arc_atk"></div></div><div class="input-wrapper"><label>Lethality (%)<span class="tooltip-icon" data-tooltip="Archer Lethality %">?</span></label><input id="arc_let" type="number" step="0.1" value="479.7"><div class="error-message" id="err_arc_let"></div></div></div>
-    </div>
-    <div class="input-wrapper" style="margin-top:8px"><label>Troop tier<span class="tooltip-icon" data-tooltip="Your troop tier">?</span></label><select id="troopTier"><option value="T6">T6</option><option value="T9">T9</option><option value="T10">T10</option><option value="T10.TG1" selected>T10.TG1</option><option value="T10.TG2">T10.TG2</option><option value="T10.TG3">T10.TG3</option><option value="T10.TG4">T10.TG4</option><option value="T10.TG5">T10.TG5</option></select><div class="error-message" id="err_troopTier"></div></div>
-    <div class="grid grid-two" style="margin-top:10px">
-      <div><h3 class="grid-section-title">Available troops</h3><div class="input-wrapper"><label>Infantry</label><input id="stockInf" type="number" min="0" value="211539"><div class="error-message" id="err_stockInf"></div></div><div class="input-wrapper"><label>Cavalry</label><input id="stockCav" type="number" min="0" value="191128"><div class="error-message" id="err_stockCav"></div></div><div class="input-wrapper"><label>Archers</label><input id="stockArc" type="number" min="0" value="312493"><div class="error-message" id="err_stockArc"></div></div></div>
-      <div><h3 class="grid-section-title" style="color:var(--cyan)">Formation settings</h3><div class="input-wrapper"><label>Rally size</label><input id="rallySize" type="number" min="0" value="134850"><div class="error-message" id="err_rallySize"></div></div><div class="input-wrapper"><label>Join cap</label><input id="marchSize" type="number" min="0" value="65000"><div class="error-message" id="err_marchSize"></div></div><div class="input-wrapper"><label># marches</label><input id="numFormations" type="number" min="1" value="6"><div class="error-message" id="err_numFormations"></div></div></div>
-    </div>
-    <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
-      <button id="infoBtn-magic" onclick="toggleInfoPanel('magic')" style="flex:1;min-width:120px;padding:8px 12px;background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.18);border-radius:8px;color:var(--text);font-size:.82rem;font-weight:600;cursor:pointer;font-family:var(--font);text-align:left;transition:all .2s">✨ <strong>Magic Ratio?</strong></button>
-      <button id="infoBtn-optiona" onclick="toggleInfoPanel('optiona')" style="flex:1;min-width:120px;padding:8px 12px;background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.18);border-radius:8px;color:var(--text);font-size:.82rem;font-weight:600;cursor:pointer;font-family:var(--font);text-align:left;transition:all .2s">⚡ <strong>Option-A?</strong></button>
-    </div>
-    <div id="infoPanel-magic" class="info-expand" style="margin-top:6px"><div style="background:rgba(16,185,129,.03);border:1px solid rgba(16,185,129,.1);border-radius:8px;padding:12px;font-size:.84rem;line-height:1.55;color:var(--text)"><p style="margin:0 0 6px"><strong>Balanced simulation engine</strong> — tests all combos for best 10 call/join ratios.</p><strong>💚 FOCUS:</strong> Reduces archers in CALL to maximize JOIN archer count.</div></div>
-    <div id="infoPanel-optiona" class="info-expand" style="margin-top:6px"><div style="background:rgba(245,158,11,.03);border:1px solid rgba(245,158,11,.1);border-radius:8px;padding:12px;font-size:.84rem;line-height:1.55;color:var(--text)"><p style="margin:0 0 6px">Uses ATK/Lethality to <strong>calculate optimal call formation</strong>.</p><strong>🏹 FOCUS:</strong> Maximizes ARCHER in CALL, fills JOINs with remaining.</div></div>
-  </section>
-  <div class="button-row"><button id="btn-magic" class="big-button magic-animated">✨ <strong>Magic Ratio</strong> ✨</button><button id="btn-optiona" class="big-button optiona-animated">⚡ <strong>Option-A</strong> ⚡</button></div>
-  <section id="engine-magic" class="panel glass-card"><h2 style="text-align:center">✨ Magic Ratio ✨</h2><div class="panel-wrapper"><div id="magic-loading" class="loading-indicator"><div class="spinner"></div><div class="loading-text">Computing...</div></div><div class="panel-content" id="magic-content"><div class="sub-panel"><section class="sub-panel-magic"><h3 style="margin:0">Compositions</h3><div class="pill" style="margin:6px 0 4px">Call rally</div><div id="fractionReadout" class="muted1" style="margin-top:4px"></div><div id="callRallyTable" style="margin-top:6px"></div><div class="pill" style="margin:10px 0 4px">Join rallies</div><div id="joinTableWrap" style="margin-top:6px"></div><div class="sub-panel" style="background:rgba(10,14,24,.35);margin-top:10px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><div><div style="font-weight:600;font-size:.84rem">Recommended marches</div><div id="recommendedDisplay" class="muted" style="margin-top:2px">…</div></div><button id="btnUseRecommended" class="inline-btn btn-magic">🔥Recommended</button></div></div></section><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px"><div><div class="pill">Score</div><div id="selectedTierNote" class="muted" style="margin-top:4px"></div></div><div><div class="pill">Inventory</div><div id="inventoryReadout" class="muted" style="margin-top:4px;white-space:pre-line"></div></div></div><section class="sub-panel" style="margin-top:10px"><h3 style="margin:0">Scoreboard</h3><div class="muted" style="font-size:.72rem;margin:3px 0 4px">Top formations by total damage</div><div id="scoreboardTableWrap"></div></section><input id="hiddenLastMode" type="hidden" value="magic12"><input id="hiddenBestFractions" type="hidden" value=""></div></div></div></section>
-  <section id="engine-optiona" class="panel glass-card"><h2 style="text-align:center">⚡ Option-A ⚡</h2><div class="panel-wrapper"><div id="optiona-loading" class="loading-indicator"><div class="spinner"></div><div class="loading-text">Computing...</div></div><div class="panel-content" id="optiona-content"><section class="sub-panel-optiona"><strong><div id="bestReadout" class="muted1" style="margin-top:6px;text-align:center"></div></strong><div class="comp-override-grid" style="margin:8px 0"><div><label><strong>Call</strong> (Inf/Cav/Arc)<span class="tooltip-icon" data-tooltip="Edit to override">?</span></label><input id="compInput" type="text" placeholder="e.g. 5/15/80"><div id="compHint" class="muted" style="margin-top:2px;font-size:.68rem"></div></div><div><label><strong>Join</strong> (Inf/Cav/Arc)<span class="tooltip-icon" data-tooltip="Edit to override">?</span></label><input id="compInputJoin" type="text" placeholder="e.g. 5/20/75"><div id="compHintJoin" class="muted" style="margin-top:2px;font-size:.68rem"></div></div></div><div id="optTableWrap"></div><div class="sub-panel" style="margin-top:8px"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600;font-size:.84rem">Recommended marches</div><div id="opt_recommendedDisplay" class="muted" style="margin-top:2px">…</div></div><button id="opt_btnUseRecommended" class="inline-btn btn-optiona">🔥Recommended</button></div></div></section><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px"><div><div class="pill">Target fractions</div><div id="opt_fractionReadout" class="muted" style="margin-top:4px"></div></div><div><div class="pill">Inventory</div><div id="opt_inventoryReadout" class="muted" style="margin-top:4px;white-space:pre-line"></div></div></div><section style="position:absolute;height:1px;overflow:hidden;opacity:0"><div id="ternaryPlot" style="width:100%;height:650px"></div><div id="bestReadout2"></div></section></div></div></section>
-  <div style="max-width:780px;margin:0 auto;padding:0 12px"><div style="background:rgba(17,24,39,.45);backdrop-filter:blur(14px);border:1px solid var(--bdr-acc);border-radius:14px;padding:24px 18px;margin-bottom:20px;text-align:center"><div style="font-size:1.4rem;margin-bottom:4px">🐻 Thank You! 🎯</div><p style="color:var(--text);font-size:.95rem;font-weight:700;margin:0 0 4px">Crush that bear! 🏆</p><p style="color:var(--dim);font-size:.82rem;margin:0 0 14px">Free tool built with love. Support on Patreon!</p><a href="https://www.patreon.com/15651923/join" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg">❤️ Support on Patreon</a></div></div>
-  <footer class="site-footer"><div class="footer-links"><a href="disclaimer.html">Disclaimer</a><a href="privacy.html">Privacy & GDPR</a></div><div class="footer-credit"><p>1079Magic — independent fan-made tool. Not affiliated with game developers.</p><p>© 2026 Cro_Baby_Shark. Thanks to BladeXtreme!</p></div></footer>
+<section class="hero"><div class="hero-glow" aria-hidden="true"></div><div class="hero-badge"><span class="dot"></span><span>V2 · Formation Engine</span></div><div><img src="assets/signature.jpg" alt="1079" class="hero-image" width="85" height="85"></div><h1 class="hero-title"><span class="gradient-text">1079Magic</span></h1><p class="hero-subtitle">Bear formation optimizer — Magic Ratio & Option-A</p></section>
+<section class="panel glass-card">
+  <h2>Troop Stats Input <span class="tooltip-icon" data-tooltip="Enter your hero attack % and lethality % from in-game hero setup">?</span></h2>
+  <div class="help-box collapsed"><div class="help-title">📊 How to collect troop stats:</div><div class="help-section"><ol><li>🎯 Rally on <strong>Terror</strong> with strongest heroes.</li><li>📄 Screenshot <strong>Bonus Details</strong> or enter manually.</li><li>🪖 Screenshot <strong>Squad</strong> troop amounts or type below.</li><li>📐 Check <strong>Squad → Formation</strong> for rally size.</li></ol></div></div>
+  <div id="validationSummary" class="validation-summary"><div class="validation-summary-title">⚠️ Validation Errors:</div><ul id="validationList"></ul></div>
+  <div class="grid grid-stats">
+    <div><h3>Infantry</h3><div class="input-wrapper"><label>Attack (%)<span class="tooltip-icon" data-tooltip="Infantry Attack %">?</span></label><input id="inf_atk" type="number" step="0.1" value="481.6"><div class="error-message" id="err_inf_atk"></div></div><div class="input-wrapper"><label>Lethality (%)<span class="tooltip-icon" data-tooltip="Infantry Lethality %">?</span></label><input id="inf_let" type="number" step="0.1" value="284.4"><div class="error-message" id="err_inf_let"></div></div></div>
+    <div><h3>Cavalry</h3><div class="input-wrapper"><label>Attack (%)<span class="tooltip-icon" data-tooltip="Cavalry Attack %">?</span></label><input id="cav_atk" type="number" step="0.1" value="501.3"><div class="error-message" id="err_cav_atk"></div></div><div class="input-wrapper"><label>Lethality (%)<span class="tooltip-icon" data-tooltip="Cavalry Lethality %">?</span></label><input id="cav_let" type="number" step="0.1" value="325.4"><div class="error-message" id="err_cav_let"></div></div></div>
+    <div><h3>Archers</h3><div class="input-wrapper"><label>Attack (%)<span class="tooltip-icon" data-tooltip="Archer Attack %">?</span></label><input id="arc_atk" type="number" step="0.1" value="509.9"><div class="error-message" id="err_arc_atk"></div></div><div class="input-wrapper"><label>Lethality (%)<span class="tooltip-icon" data-tooltip="Archer Lethality %">?</span></label><input id="arc_let" type="number" step="0.1" value="479.7"><div class="error-message" id="err_arc_let"></div></div></div>
+  </div>
+  <div class="input-wrapper" style="margin-top:5px"><label>Troop tier<span class="tooltip-icon" data-tooltip="Your troop tier">?</span></label><select id="troopTier"><option value="T6">T6</option><option value="T9">T9</option><option value="T10">T10</option><option value="T10.TG1" selected>T10.TG1</option><option value="T10.TG2">T10.TG2</option><option value="T10.TG3">T10.TG3</option><option value="T10.TG4">T10.TG4</option><option value="T10.TG5">T10.TG5</option></select><div class="error-message" id="err_troopTier"></div></div>
+  <div class="grid grid-two" style="margin-top:6px">
+    <div><h3 class="grid-section-title">Available troops</h3><div class="input-wrapper"><label>Infantry</label><input id="stockInf" type="number" min="0" value="211539"><div class="error-message" id="err_stockInf"></div></div><div class="input-wrapper"><label>Cavalry</label><input id="stockCav" type="number" min="0" value="191128"><div class="error-message" id="err_stockCav"></div></div><div class="input-wrapper"><label>Archers</label><input id="stockArc" type="number" min="0" value="312493"><div class="error-message" id="err_stockArc"></div></div></div>
+    <div><h3 class="grid-section-title" style="color:var(--cyan)">Formation settings</h3><div class="input-wrapper"><label>Rally size</label><input id="rallySize" type="number" min="0" value="134850"><div class="error-message" id="err_rallySize"></div></div><div class="input-wrapper"><label>Join cap</label><input id="marchSize" type="number" min="0" value="65000"><div class="error-message" id="err_marchSize"></div></div><div class="input-wrapper"><label># marches</label><input id="numFormations" type="number" min="1" value="6"><div class="error-message" id="err_numFormations"></div></div></div>
+  </div>
+  <div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap">
+    <button id="infoBtn-magic" onclick="toggleInfoPanel('magic')" style="flex:1;min-width:90px;padding:6px 8px;background:rgba(16,185,129,.03);border:1px solid rgba(16,185,129,.12);border-radius:5px;color:var(--text);font-size:.74rem;font-weight:600;cursor:pointer;font-family:var(--font);text-align:left;transition:all .2s">✨ <strong>Magic Ratio?</strong></button>
+    <button id="infoBtn-optiona" onclick="toggleInfoPanel('optiona')" style="flex:1;min-width:90px;padding:6px 8px;background:rgba(245,166,35,.03);border:1px solid rgba(245,166,35,.12);border-radius:5px;color:var(--text);font-size:.74rem;font-weight:600;cursor:pointer;font-family:var(--font);text-align:left;transition:all .2s">⚡ <strong>Option-A?</strong></button>
+  </div>
+  <div id="infoPanel-magic" class="info-expand" style="margin-top:3px"><div style="background:rgba(16,185,129,.02);border:1px solid rgba(16,185,129,.07);border-radius:5px;padding:8px;font-size:.76rem;line-height:1.45;color:var(--text)"><p style="margin:0 0 3px"><strong>Balanced simulation engine</strong> — tests all combos for best 10 call/join ratios.</p><strong>💚 FOCUS:</strong> Reduces archers in CALL to maximize JOIN archer count.</div></div>
+  <div id="infoPanel-optiona" class="info-expand" style="margin-top:3px"><div style="background:rgba(245,166,35,.02);border:1px solid rgba(245,166,35,.07);border-radius:5px;padding:8px;font-size:.76rem;line-height:1.45;color:var(--text)"><p style="margin:0 0 3px">Uses ATK/Lethality to <strong>calculate optimal call formation</strong>.</p><strong>🏹 FOCUS:</strong> Maximizes ARCHER in CALL, fills JOINs with remaining.</div></div>
+</section>
+<div class="button-row"><button id="btn-magic" class="big-button magic-animated">✨ <strong>Magic Ratio</strong> ✨</button><button id="btn-optiona" class="big-button optiona-animated">⚡ <strong>Option-A</strong> ⚡</button></div>
+<section id="engine-magic" class="panel glass-card"><h2 style="text-align:center">✨ Magic Ratio ✨</h2><div class="panel-wrapper"><div id="magic-loading" class="loading-indicator"><div class="spinner"></div><div class="loading-text">Computing...</div></div><div class="panel-content" id="magic-content"><div class="sub-panel"><section class="sub-panel-magic"><h3 style="margin:0">Compositions</h3><div class="pill" style="margin:3px 0 2px">Call rally</div><div id="fractionReadout" class="muted1" style="margin-top:2px"></div><div id="callRallyTable" style="margin-top:3px"></div><div class="pill" style="margin:6px 0 2px">Join rallies</div><div id="joinTableWrap" style="margin-top:3px"></div><div class="sub-panel" style="background:rgba(10,14,24,.25);margin-top:6px"><div style="display:flex;justify-content:space-between;align-items:center;gap:4px;flex-wrap:wrap"><div><div style="font-weight:600;font-size:.76rem">Recommended marches</div><div id="recommendedDisplay" class="muted" style="margin-top:1px">…</div></div><button id="btnUseRecommended" class="inline-btn btn-magic">🔥Recommended</button></div></div></section><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px"><div><div class="pill">Score</div><div id="selectedTierNote" class="muted" style="margin-top:2px"></div></div><div><div class="pill">Inventory</div><div id="inventoryReadout" class="muted" style="margin-top:2px;white-space:pre-line"></div></div></div><section class="sub-panel" style="margin-top:6px"><h3 style="margin:0">Scoreboard</h3><div class="muted" style="font-size:.64rem;margin:1px 0 2px">Top formations by total damage</div><div id="scoreboardTableWrap"></div></section><input id="hiddenLastMode" type="hidden" value="magic12"><input id="hiddenBestFractions" type="hidden" value=""></div></div></div></section>
+<section id="engine-optiona" class="panel glass-card"><h2 style="text-align:center">⚡ Option-A ⚡</h2><div class="panel-wrapper"><div id="optiona-loading" class="loading-indicator"><div class="spinner"></div><div class="loading-text">Computing...</div></div><div class="panel-content" id="optiona-content"><section class="sub-panel-optiona"><strong><div id="bestReadout" class="muted1" style="margin-top:3px;text-align:center"></div></strong><div class="comp-override-grid" style="margin:5px 0"><div><label><strong>Call</strong> (Inf/Cav/Arc)<span class="tooltip-icon" data-tooltip="Edit to override">?</span></label><input id="compInput" type="text" placeholder="e.g. 5/15/80"><div id="compHint" class="muted" style="margin-top:1px;font-size:.62rem"></div></div><div><label><strong>Join</strong> (Inf/Cav/Arc)<span class="tooltip-icon" data-tooltip="Edit to override">?</span></label><input id="compInputJoin" type="text" placeholder="e.g. 5/20/75"><div id="compHintJoin" class="muted" style="margin-top:1px;font-size:.62rem"></div></div></div><div id="optTableWrap"></div><div class="sub-panel" style="margin-top:5px"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600;font-size:.76rem">Recommended marches</div><div id="opt_recommendedDisplay" class="muted" style="margin-top:1px">…</div></div><button id="opt_btnUseRecommended" class="inline-btn btn-optiona">🔥Recommended</button></div></div></section><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px"><div><div class="pill">Target fractions</div><div id="opt_fractionReadout" class="muted" style="margin-top:2px"></div></div><div><div class="pill">Inventory</div><div id="opt_inventoryReadout" class="muted" style="margin-top:2px;white-space:pre-line"></div></div></div><section style="position:absolute;height:1px;overflow:hidden;opacity:0;pointer-events:none"><div id="ternaryPlot" style="width:100%;height:650px"></div><div id="bestReadout2"></div></section></div></div></section>
+<div style="max-width:780px;margin:0 auto;padding:0 8px"><div style="background:rgba(17,24,39,.35);backdrop-filter:blur(10px);border:1px solid var(--bdr-acc);border-radius:var(--R);padding:16px 12px;margin-bottom:14px;text-align:center"><div style="font-size:1.2rem;margin-bottom:2px">🐻 Thank You! 🎯</div><p style="color:var(--text);font-size:.85rem;font-weight:700;margin:0 0 2px">Crush that bear! 🏆</p><p style="color:var(--dim);font-size:.74rem;margin:0 0 10px">Free tool built with love. Support on Patreon!</p><a href="https://www.patreon.com/15651923/join" target="_blank" rel="noopener noreferrer" class="btn btn-primary">❤️ Support on Patreon</a></div></div>
+<footer class="site-footer"><div class="footer-links"><a href="disclaimer.html">Disclaimer</a><a href="privacy.html">Privacy & GDPR</a></div><div class="footer-credit"><p>1079Magic — independent fan-made tool. Not affiliated with game developers.</p><p>© 2026 Cro_Baby_Shark. Thanks to BladeXtreme!</p></div></footer>
 </div>
 <script>
-  // ========== State Management ==========
-  const APP_STATE = {
-    activeEngine: null,
-    magicInited: false,
-    optionInited: false
-  };
-
-  const WATCH_IDS = [
-    'inf_atk', 'inf_let', 'cav_atk', 'cav_let', 'arc_atk', 'arc_let',
-    'troopTier', 'stockInf', 'stockCav', 'stockArc',
-    'rallySize', 'marchSize', 'numFormations'
-  ];
-
-  // ========== Loading Indicator Control ==========
-  function showLoadingIndicator(engine) {
-    const loadingEl = document.getElementById(`${engine}-loading`);
-    const contentEl = document.getElementById(`${engine}-content`);
-    if (loadingEl) loadingEl.classList.add('active');
-    if (contentEl) contentEl.classList.add('computing');
-  }
-
-  function hideLoadingIndicator(engine) {
-    const loadingEl = document.getElementById(`${engine}-loading`);
-    const contentEl = document.getElementById(`${engine}-content`);
-    if (loadingEl) loadingEl.classList.remove('active');
-    if (contentEl) contentEl.classList.remove('computing');
-  }
-
-  // ========== Utility: Debounce ==========
-  function debounce(func, delay) {
-    let timeoutId;
-    return function(...args) {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => func(...args), delay);
-    };
-  }
-
-  function activateEngine(engineName) {
-    const magicPanel = document.getElementById('engine-magic');
-    const optionPanel = document.getElementById('engine-optiona');
-
-    if (engineName === 'magic') {
-      APP_STATE.activeEngine = 'magic';
-      magicPanel.style.display = 'block';
-      optionPanel.style.display = 'none';
-
-      if (!APP_STATE.magicInited && window.Magic && typeof window.Magic.init === 'function') {
-        showLoadingIndicator('magic');
-        window.Magic.init();
-        APP_STATE.magicInited = true;
-        setTimeout(() => hideLoadingIndicator('magic'), 500);
-      } else if (window.Magic && typeof window.Magic.compute === 'function') {
-        showLoadingIndicator('magic');
-        window.Magic.compute('magic12');
-        setTimeout(() => hideLoadingIndicator('magic'), 300);
-      }
-    } else if (engineName === 'optiona') {
-      APP_STATE.activeEngine = 'optiona';
-      optionPanel.style.display = 'block';
-      magicPanel.style.display = 'none';
-
-      if (!APP_STATE.optionInited && window.OptionA && typeof window.OptionA.init === 'function') {
-        showLoadingIndicator('optiona');
-        window.OptionA.init();
-        APP_STATE.optionInited = true;
-        setTimeout(() => hideLoadingIndicator('optiona'), 500);
-      } else if (window.OptionA && typeof window.OptionA.computeAll === 'function') {
-        showLoadingIndicator('optiona');
-        window.OptionA.computeAll();
-        setTimeout(() => hideLoadingIndicator('optiona'), 300);
-      }
-    }
-
-    saveState();
-  }
-
-
-  function saveState() {
-    const state = {
-      activeEngine: APP_STATE.activeEngine,
-      inputs: {}
-    };
-    WATCH_IDS.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) state.inputs[id] = el.value;
-    });
-    localStorage.setItem("lol1079_state_v1", JSON.stringify(state));
-  }
-
-  function restoreState() {
-    const raw = localStorage.getItem("lol1079_state_v1");
-    if (!raw) return;
-    
-    let state;
-    try { state = JSON.parse(raw); } catch { return; }
-
-    if (state.inputs) {
-      WATCH_IDS.forEach(id => {
-        const el = document.getElementById(id);
-        if (el && state.inputs[id] !== undefined) {
-          el.value = state.inputs[id];
-        }
-      });
-    }
-
-    if (state.activeEngine) {
-      APP_STATE.activeEngine = state.activeEngine;
-    }
-  }
-
-  const debouncedSave = debounce(saveState, 300);
-
-  function attachInputListeners() {
-    WATCH_IDS.forEach(id => {
-      const el = document.getElementById(id);
-      if (!el) return;
-
-      el.addEventListener('input', () => {
-        debouncedSave();
-        if (APP_STATE.activeEngine === 'magic' && window.Magic && typeof window.Magic.compute === 'function') {
-          showLoadingIndicator('magic');
-          window.Magic.compute('magic12');
-          setTimeout(() => hideLoadingIndicator('magic'), 200);
-        } else if (APP_STATE.activeEngine === 'optiona' && window.OptionA && typeof window.OptionA.computeAll === 'function') {
-          showLoadingIndicator('optiona');
-          window.OptionA.computeAll();
-          setTimeout(() => hideLoadingIndicator('optiona'), 200);
-        }
-      });
-
-      el.addEventListener('change', () => {
-        debouncedSave();
-        if (APP_STATE.activeEngine === 'magic' && window.Magic && typeof window.Magic.compute === 'function') {
-          showLoadingIndicator('magic');
-          window.Magic.compute('magic12');
-          setTimeout(() => hideLoadingIndicator('magic'), 200);
-        } else if (APP_STATE.activeEngine === 'optiona' && window.OptionA && typeof window.OptionA.computeAll === 'function') {
-          showLoadingIndicator('optiona');
-          window.OptionA.computeAll();
-          setTimeout(() => hideLoadingIndicator('optiona'), 200);
-        }
-      });
-    });
-  }
-
-  function setupButtonListeners() {
-    const magicBtn = document.getElementById('btn-magic');
-    const optionBtn = document.getElementById('btn-optiona');
-
-    if (magicBtn) magicBtn.addEventListener('click', () => activateEngine('magic'));
-    if (optionBtn) optionBtn.addEventListener('click', () => activateEngine('optiona'));
-  }
-
-  // Attach live-recompute listeners to compInput / compInputJoin for Option-A
-  // These fields live inside the engine panel, so we use event delegation on document
-  function setupCompInputListeners() {
-    const debouncedRecompute = debounce(() => {
-      if (APP_STATE.activeEngine === 'optiona' && window.OptionA && typeof window.OptionA.computeAll === 'function') {
-        window.OptionA.computeAll();
-      }
-    }, 350);
-
-    ['compInput', 'compInputJoin'].forEach(id => {
-      // Try direct bind first (in case element already exists)
-      const el = document.getElementById(id);
-      if (el) {
-        el.addEventListener('input',  debouncedRecompute);
-        el.addEventListener('change', debouncedRecompute);
-      }
-    });
-
-    // Also use delegation so it works even if the panel was hidden on init
-    document.addEventListener('input', (e) => {
-      if (e.target.id === 'compInput' || e.target.id === 'compInputJoin') {
-        debouncedRecompute();
-      }
-    });
-    document.addEventListener('change', (e) => {
-      if (e.target.id === 'compInput' || e.target.id === 'compInputJoin') {
-        debouncedRecompute();
-      }
-    });
-  }
-
-  function setupHelpToggles() {
-    const boxes = document.querySelectorAll('.help-box');
-    let counter = 1;
-    boxes.forEach((box) => {
-      box.classList.add('collapsed');
-
-      const title = box.querySelector('.help-title');
-      const section = box.querySelector('.help-section');
-      if (!title || !section) return;
-
-      if (!title.id) title.id = `help-title-${counter}`;
-      if (!section.id) section.id = `help-section-${counter}`;
-      title.setAttribute('role', 'button');
-      title.setAttribute('tabindex', '0');
-      title.setAttribute('aria-expanded', 'false');
-      title.setAttribute('aria-controls', section.id);
-      section.setAttribute('aria-labelledby', title.id);
-
-      const toggle = () => {
-        const isCollapsed = box.classList.toggle('collapsed');
-        title.setAttribute('aria-expanded', String(!isCollapsed));
-      };
-
-      box.addEventListener('click', (e) => {
-        if (e.target.closest('.help-section')) return;
-        toggle();
-      });
-
-      title.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          toggle();
-        }
-      });
-
-      counter++;
-    });
-  }
-
-  function initPage() {
-    restoreState();
-    attachInputListeners();
-    setupButtonListeners();
-    setupCompInputListeners();
-    setupHelpToggles();
-
-    if (APP_STATE.activeEngine) {
-      setTimeout(() => activateEngine(APP_STATE.activeEngine), 100);
-    }
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initPage);
-  } else {
-    initPage();
-  }
-
-  // ── JS Tooltip: works on both tap (mobile) and hover (desktop) ──
-  (function() {
-    const bubble = document.getElementById('tt-bubble');
-    let justTapped = false; // guard: prevent scroll from hiding after a tap
-
-    function showTip(icon) {
-      const text = icon.getAttribute('data-tooltip');
-      if (!text || !bubble) return;
-      bubble.textContent = text;
-      bubble.style.display = 'block';
-      positionTip(icon);
-      bubble._src = icon;
-    }
-
-    function positionTip(icon) {
-      const r = icon.getBoundingClientRect();
-      const bw = bubble.offsetWidth || 220;
-      const bh = bubble.offsetHeight || 40;
-      const margin = 8;
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
-
-      let left = r.right + margin;
-      let top  = r.top + r.height / 2 - bh / 2;
-
-      if (left + bw > vw - margin) left = r.left - bw - margin;
-      if (left < margin) {
-        left = Math.max(margin, r.left + r.width / 2 - bw / 2);
-        top  = r.bottom + margin;
-      }
-      top = Math.max(margin, Math.min(top, vh - bh - margin));
-
-      bubble.style.left = left + 'px';
-      bubble.style.top  = top  + 'px';
-    }
-
-    function hideTip() {
-      if (bubble) bubble.style.display = 'none';
-      if (bubble) bubble._src = null;
-    }
-
-    // Hide on scroll — but not if we just tapped (micro-scroll from tap)
-    function onScroll() {
-      if (justTapped) return;
-      hideTip();
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    document.addEventListener('scroll', onScroll, { passive: true, capture: true });
-
-    // touchstart: show immediately on first tap, toggle on second tap of same icon
-    document.addEventListener('touchstart', (e) => {
-      const icon = e.target.closest('.tooltip-icon');
-      if (icon) {
-        e.preventDefault(); // prevent ghost click delay
-        justTapped = true;
-        setTimeout(() => { justTapped = false; }, 400);
-
-        if (bubble.style.display !== 'none' && bubble._src === icon) {
-          hideTip();
-        } else {
-          showTip(icon);
-        }
-      } else if (bubble.style.display !== 'none') {
-        hideTip();
-      }
-    }, { passive: false });
-
-    // Desktop: mouseover/out
-    document.addEventListener('mouseover', (e) => {
-      const icon = e.target.closest('.tooltip-icon');
-      if (icon) showTip(icon);
-    });
-    document.addEventListener('mouseout', (e) => {
-      if (e.target.closest('.tooltip-icon')) hideTip();
-    });
-  })();
-
-  // ── Info panel toggle (smooth max-height animation via CSS class) ──
-  let _openInfoPanel = null;
-
-  function toggleInfoPanel(which) {
-    const panel    = document.getElementById('infoPanel-' + which);
-    const btnMagic = document.getElementById('infoBtn-magic');
-    const btnOptA  = document.getElementById('infoBtn-optiona');
-    if (!panel) return;
-
-    const isOpen = panel.classList.contains('open');
-
-    // Close both
-    ['magic','optiona'].forEach(id => {
-      const p = document.getElementById('infoPanel-' + id);
-      if (p) p.classList.remove('open');
-    });
-    if (btnMagic) { btnMagic.style.background = 'rgba(81,246,59,0.10)';  btnMagic.style.borderColor = 'rgba(81,246,59,0.35)'; }
-    if (btnOptA)  { btnOptA.style.background  = 'rgba(246,59,59,0.10)'; btnOptA.style.borderColor  = 'rgba(246,59,59,0.35)'; }
-
-    if (!isOpen) {
-      panel.classList.add('open');
-      _openInfoPanel = which;
-      const btn = document.getElementById('infoBtn-' + which);
-      if (btn && which === 'magic')   { btn.style.background = 'rgba(81,246,59,0.22)';  btn.style.borderColor = 'rgba(81,246,59,0.7)'; }
-      if (btn && which === 'optiona') { btn.style.background = 'rgba(246,59,59,0.22)'; btn.style.borderColor = 'rgba(246,59,59,0.7)'; }
-    } else {
-      _openInfoPanel = null;
-    }
-  }
+const APP_STATE={activeEngine:null,magicInited:false,optionInited:false};
+const WATCH_IDS=['inf_atk','inf_let','cav_atk','cav_let','arc_atk','arc_let','troopTier','stockInf','stockCav','stockArc','rallySize','marchSize','numFormations'];
+function showLoadingIndicator(e){const l=document.getElementById(e+'-loading'),c=document.getElementById(e+'-content');if(l)l.classList.add('active');if(c)c.classList.add('computing')}
+function hideLoadingIndicator(e){const l=document.getElementById(e+'-loading'),c=document.getElementById(e+'-content');if(l)l.classList.remove('active');if(c)c.classList.remove('computing')}
+function debounce(f,d){let t;return function(...a){clearTimeout(t);t=setTimeout(()=>f(...a),d)}}
+function activateEngine(n){const m=document.getElementById('engine-magic'),o=document.getElementById('engine-optiona');if(n==='magic'){APP_STATE.activeEngine='magic';m.style.display='block';o.style.display='none';if(!APP_STATE.magicInited&&window.Magic&&typeof window.Magic.init==='function'){showLoadingIndicator('magic');window.Magic.init();APP_STATE.magicInited=true;setTimeout(()=>hideLoadingIndicator('magic'),500)}else if(window.Magic&&typeof window.Magic.compute==='function'){showLoadingIndicator('magic');window.Magic.compute('magic12');setTimeout(()=>hideLoadingIndicator('magic'),300)}}else if(n==='optiona'){APP_STATE.activeEngine='optiona';o.style.display='block';m.style.display='none';if(!APP_STATE.optionInited&&window.OptionA&&typeof window.OptionA.init==='function'){showLoadingIndicator('optiona');window.OptionA.init();APP_STATE.optionInited=true;setTimeout(()=>hideLoadingIndicator('optiona'),500)}else if(window.OptionA&&typeof window.OptionA.computeAll==='function'){showLoadingIndicator('optiona');window.OptionA.computeAll();setTimeout(()=>hideLoadingIndicator('optiona'),300)}}saveState()}
+function saveState(){const s={activeEngine:APP_STATE.activeEngine,inputs:{}};WATCH_IDS.forEach(id=>{const el=document.getElementById(id);if(el)s.inputs[id]=el.value});localStorage.setItem("lol1079_state_v1",JSON.stringify(s))}
+function restoreState(){const r=localStorage.getItem("lol1079_state_v1");if(!r)return;let s;try{s=JSON.parse(r)}catch{return}if(s.inputs)WATCH_IDS.forEach(id=>{const el=document.getElementById(id);if(el&&s.inputs[id]!==undefined)el.value=s.inputs[id]});if(s.activeEngine)APP_STATE.activeEngine=s.activeEngine}
+const debouncedSave=debounce(saveState,300);
+function attachInputListeners(){WATCH_IDS.forEach(id=>{const el=document.getElementById(id);if(!el)return;el.addEventListener('input',()=>{debouncedSave();if(APP_STATE.activeEngine==='magic'&&window.Magic&&typeof window.Magic.compute==='function'){showLoadingIndicator('magic');window.Magic.compute('magic12');setTimeout(()=>hideLoadingIndicator('magic'),200)}else if(APP_STATE.activeEngine==='optiona'&&window.OptionA&&typeof window.OptionA.computeAll==='function'){showLoadingIndicator('optiona');window.OptionA.computeAll();setTimeout(()=>hideLoadingIndicator('optiona'),200)}});el.addEventListener('change',()=>{debouncedSave();if(APP_STATE.activeEngine==='magic'&&window.Magic&&typeof window.Magic.compute==='function'){showLoadingIndicator('magic');window.Magic.compute('magic12');setTimeout(()=>hideLoadingIndicator('magic'),200)}else if(APP_STATE.activeEngine==='optiona'&&window.OptionA&&typeof window.OptionA.computeAll==='function'){showLoadingIndicator('optiona');window.OptionA.computeAll();setTimeout(()=>hideLoadingIndicator('optiona'),200)}})})}
+function setupButtonListeners(){const m=document.getElementById('btn-magic'),o=document.getElementById('btn-optiona');if(m)m.addEventListener('click',()=>activateEngine('magic'));if(o)o.addEventListener('click',()=>activateEngine('optiona'))}
+function setupCompInputListeners(){const dr=debounce(()=>{if(APP_STATE.activeEngine==='optiona'&&window.OptionA&&typeof window.OptionA.computeAll==='function')window.OptionA.computeAll()},350);['compInput','compInputJoin'].forEach(id=>{const el=document.getElementById(id);if(el){el.addEventListener('input',dr);el.addEventListener('change',dr)}});document.addEventListener('input',e=>{if(e.target.id==='compInput'||e.target.id==='compInputJoin')dr()});document.addEventListener('change',e=>{if(e.target.id==='compInput'||e.target.id==='compInputJoin')dr()})}
+function setupHelpToggles(){let c=1;document.querySelectorAll('.help-box').forEach(box=>{box.classList.add('collapsed');const t=box.querySelector('.help-title'),s=box.querySelector('.help-section');if(!t||!s)return;if(!t.id)t.id='help-title-'+c;if(!s.id)s.id='help-section-'+c;t.setAttribute('role','button');t.setAttribute('tabindex','0');t.setAttribute('aria-expanded','false');t.setAttribute('aria-controls',s.id);s.setAttribute('aria-labelledby',t.id);const toggle=()=>{const ic=box.classList.toggle('collapsed');t.setAttribute('aria-expanded',String(!ic))};box.addEventListener('click',e=>{if(e.target.closest('.help-section'))return;toggle()});t.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}});c++})}
+function initPage(){restoreState();attachInputListeners();setupButtonListeners();setupCompInputListeners();setupHelpToggles();if(APP_STATE.activeEngine)setTimeout(()=>activateEngine(APP_STATE.activeEngine),100)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initPage);else initPage();
+(function(){const b=document.getElementById('tt-bubble');let jt=false;function show(i){const t=i.getAttribute('data-tooltip');if(!t||!b)return;b.textContent=t;b.style.display='block';pos(i);b._src=i}function pos(i){const r=i.getBoundingClientRect();const bw=b.offsetWidth||180,bh=b.offsetHeight||28,m=5,vw=window.innerWidth,vh=window.innerHeight;let l=r.right+m,t=r.top+r.height/2-bh/2;if(l+bw>vw-m)l=r.left-bw-m;if(l<m){l=Math.max(m,r.left+r.width/2-bw/2);t=r.bottom+m}t=Math.max(m,Math.min(t,vh-bh-m));b.style.left=l+'px';b.style.top=t+'px'}function hide(){if(b){b.style.display='none';b._src=null}}function onScroll(){if(jt)return;hide()}window.addEventListener('scroll',onScroll,{passive:true});document.addEventListener('scroll',onScroll,{passive:true,capture:true});document.addEventListener('touchstart',e=>{const i=e.target.closest('.tooltip-icon');if(i){e.preventDefault();jt=true;setTimeout(()=>{jt=false},400);if(b.style.display!=='none'&&b._src===i)hide();else show(i)}else if(b.style.display!=='none')hide()},{passive:false});document.addEventListener('mouseover',e=>{const i=e.target.closest('.tooltip-icon');if(i)show(i)});document.addEventListener('mouseout',e=>{if(e.target.closest('.tooltip-icon'))hide()})})();
+let _openInfoPanel=null;
+function toggleInfoPanel(w){const p=document.getElementById('infoPanel-'+w);const bm=document.getElementById('infoBtn-magic'),bo=document.getElementById('infoBtn-optiona');if(!p)return;const io=p.classList.contains('open');['magic','optiona'].forEach(id=>{const pp=document.getElementById('infoPanel-'+id);if(pp)pp.classList.remove('open')});if(bm){bm.style.background='rgba(16,185,129,.03)';bm.style.borderColor='rgba(16,185,129,.12)'}if(bo){bo.style.background='rgba(245,166,35,.03)';bo.style.borderColor='rgba(245,166,35,.12)'}if(!io){p.classList.add('open');_openInfoPanel=w;const btn=document.getElementById('infoBtn-'+w);if(btn&&w==='magic'){btn.style.background='rgba(16,185,129,.1)';btn.style.borderColor='rgba(16,185,129,.3)'}if(btn&&w==='optiona'){btn.style.background='rgba(245,166,35,.1)';btn.style.borderColor='rgba(245,166,35,.3)'}}else _openInfoPanel=null}
 </script>
 <script src="app1.js"></script>
 <script src="app2.js"></script>
 <script src="stat_ocr.js"></script>
+<footer id="site-footer" style="background:rgba(8,11,20,.85);backdrop-filter:blur(10px);color:#8490a7;padding:16px 12px;text-align:center;font-size:.74rem;border-top:1px solid rgba(255,255,255,.05);margin-top:20px">
+<p style="margin:0 0 5px">1079Magic is an independent, fan-made tool. Not affiliated with game developers.</p>
+<p style="margin:0 0 5px"><a href="disclaimer.html" style="color:#f5a623">Disclaimer</a> · <a href="privacy.html" style="color:#f5a623">Privacy & GDPR</a></p>
+<p style="margin:0;color:#5c6882">© 2026 Cro_Baby_Shark. Thanks to BladeXtreme!</p>
+</footer>
 </body>
 </html>
