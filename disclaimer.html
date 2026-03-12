@@ -1,207 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<title>Disclaimer – 1079Magic</title>
-
-<!-- FIX 1: initial-scale=0.75 so page renders at 75% zoom by default -->
-  <meta name="viewport" content="width=device-width, initial-scale=0.85, minimum-scale=0.5, maximum-scale=3.0" />
-
-  <!-- FIX 4: theme-color keeps mobile browser chrome dark, prevents white bottom bar -->
-  <meta name="theme-color" content="#0f1116" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-
-
-<style>
-  /* ------------------------------------------------------------------
-     GLOBAL THEME — Matches main app exactly
-  ------------------------------------------------------------------ */
-  :root {
-    --bg:#0f1116;
-    --panel:#1a1d24;
-    --text:#e8eaed;
-    --muted:#9aa4b2;
-    --border:#2d3340;
-    --accent:#3b82f6;
-    --accent-hover:#2563eb;color: var(--text);
-  }
-     /* FIX 2: Set html background to dark so fast-scroll overscroll never shows white */
-    html {
-      background-color: #0f1116;
-      height: 100%;
-    }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-
-      /* Background image + shading overlay */
-      background:
-        linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.65)), /* shading */
-        url('3851.jpg');  /* your uploaded Bear image */
-
-      background-size: cover;         /* fills whole screen */
-      background-position: center;    /* centers the bear nicely */
-      background-repeat: no-repeat;
-      background-attachment: fixed;   /* parallax-style effect */
-
-      color: var(--text);
-    }
-    /* FIX 3: On mobile, background-attachment:fixed causes gaps/white areas.
-     Use scroll + cover so image always fills the screen with no white space.
-     Also disable the zoom animation on mobile as percentage-based sizes
-     can expose edges on small screens. */
-  @media (max-width: 768px) {
-    body {
-      background-attachment: scroll;
-      background-size: cover !important;
-      animation: none;
-    }
-  }
-
-  /* ------------------------------------------------------------------
-     HEADER BAR (same as main app but WITHOUT image/title)
-  ------------------------------------------------------------------ */
-  .header-wrapper {
-    background: linear-gradient(
-      180deg,
-      #a71930 0%,
-      #9a172c 10%,
-      #8c1527 20%,
-      #7f1323 30%,
-      #72111f 40%,
-      #650f1b 50%,
-      #570d16 60%,
-      #4a0b12 70%,
-      #3d090e 80%,
-      #2f0709 90%,
-      #220505 100%
-    );
-    height: 90px;
-    width: 100%;
-    box-shadow:
-      0 0 40px rgba(0, 0, 0, 0.7),
-      0 15px 30px rgba(0, 0, 0, 0.6),
-      inset 0 1px 0 rgba(255,255,255,0.08),
-      inset 0 -15px 25px rgba(0,0,0,0.5);
-  }
-
-  /* ------------------------------------------------------------------
-     PAGE LAYOUT
-  ------------------------------------------------------------------ */
-  .container {
-    max-width: 1250px;
-    margin: auto;
-    padding: 24px 16px 60px;
-  }
-
-  .panel {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.35);
-    margin-top: 20px;
-  }
-
-  h1 {
-    color: var(--accent);
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 1.9rem;
-  }
-
-  p, li {
-    line-height: 1.6;
-    font-size: 1.05rem;
-  }
-
-  /* ------------------------------------------------------------------
-     FLOATING BACK BUTTON
-  ------------------------------------------------------------------ */
-  .back-floating {
-    position: fixed;
-    top: 18px;
-    left: 18px;
-    z-index: 9999;
-    background: linear-gradient(180deg, #3b82f6, #2563eb);
-    color: white;
-    padding: 10px 16px;
-    font-size: 0.95rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow:0 4px 10px rgba(0,0,0,0.4);
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition: transform 0.15s ease-out, box-shadow 0.2s ease-out;
-  }
-
-  .back-floating:hover {
-    transform: scale(1.07);
-    box-shadow: 0 0 14px #3b82f6;
-  }
-
-  .back-floating:active {
-    transform: scale(0.97);
-  }
-
-  /* ------------------------------------------------------------------
-     MOBILE FIXES — readable text, proper padding
-  ------------------------------------------------------------------ */
-  @media (max-width: 768px) {
-    h1 { font-size: 1.6rem; }
-    p, li { font-size: 1rem; }
-    .panel { padding: 18px; }
-  }
-
-  @media (max-width: 480px) {
-    h1 { font-size: 1.4rem; }
-    p, li { font-size: 0.95rem; }
-    .panel { padding: 16px; }
-
-    .back-floating {
-      top: 12px;
-      left: 12px;
-      padding: 8px 12px;
-      font-size: 0.82rem;
-    }
-  }
-</style>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Disclaimer — 1079Magic</title>
+  <meta name="theme-color" content="#080b14">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <style>
+    :root{--bg:#080b14;--text:#edf0f7;--dim:#8490a7;--gold:#f5a623;--gold-lt:#fcd97a;--border:rgba(255,255,255,.06);--R:12px;--font:'Outfit',system-ui,sans-serif}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{background:var(--bg);height:100%;-webkit-font-smoothing:antialiased}
+    body{font-family:var(--font);background:var(--bg);background-image:radial-gradient(ellipse 50% 35% at 50% 0%,rgba(245,166,35,.04) 0%,transparent 100%);color:var(--text);min-height:100%;line-height:1.6}
+    .nav{padding:14px 16px;border-bottom:1px solid var(--border)}
+    .nav a{display:inline-flex;align-items:center;gap:6px;color:var(--dim);text-decoration:none;font-size:.88rem;font-weight:500;transition:color .15s}
+    .nav a:hover{color:var(--gold)}
+    .wrap{max-width:680px;margin:0 auto;padding:32px 16px 48px}
+    .card{background:rgba(13,18,30,.75);backdrop-filter:blur(14px);border:1px solid var(--border);border-radius:var(--R);padding:28px 22px;box-shadow:0 2px 16px rgba(0,0,0,.3)}
+    h1{font-size:1.4rem;font-weight:800;letter-spacing:-.03em;margin-bottom:16px;background:linear-gradient(135deg,var(--gold-lt),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    p{font-size:.9rem;color:var(--dim);line-height:1.7;margin-bottom:12px}
+    p:last-child{margin-bottom:0}
+    strong{color:var(--text);font-weight:600}
+    .footer{text-align:center;color:rgba(132,144,167,.4);font-size:.72rem;padding:20px 16px;border-top:1px solid var(--border);margin-top:32px}
+    .footer a{color:var(--dim);text-decoration:none}.footer a:hover{color:var(--gold)}
+  </style>
 </head>
-
 <body>
-
-<div class="header-wrapper"></div>
-
-<button class="back-floating" onclick="safeBack()">← Back</button>
-
-<div class="container">
-  <div class="panel">
-
-    <h1>Disclaimer</h1>
-
-    <p>1079Magic is an independent, fan‑made tool developed for players of <strong>Kingshot</strong>. This site is not affiliated with, endorsed by, or sponsored by Kingshot, its developers, its publishers, or any related entity.</p>
-
-    <p>All trademarks, game names, images, and related assets belong to their respective owners. 1079Magic does not claim ownership of any Kingshot intellectual property.</p>
-
-    <p>This tool operates solely using player‑observed mechanics and mathematical analysis. It does not interact with the Kingshot game client, its servers, APIs, databases, or protected assets in any way.</p>
-
-    <p>By using this site, you acknowledge that gameplay outcomes are unpredictable and results generated by this tool are for informational purposes only.</p>
-
+  <div class="nav"><a href="/">← Back to 1079Magic</a></div>
+  <div class="wrap">
+    <div class="card">
+      <h1>Disclaimer</h1>
+      <p>1079Magic is an independent, fan-made tool designed for educational and entertainment purposes for Kingshot players.</p>
+      <p><strong>Not affiliated:</strong> This tool is NOT affiliated with, endorsed by, or in any way connected to the developers or publisher of Kingshot.</p>
+      <p><strong>No guarantees:</strong> Results are based on mathematical models and simulations. Actual in-game results may vary due to game mechanics, updates, or other factors beyond our control.</p>
+      <p><strong>Use at your own risk:</strong> The creators of 1079Magic are not responsible for any in-game losses, penalties, or other consequences resulting from the use of this tool.</p>
+      <p><strong>Intellectual property:</strong> All game-related terms, names, and concepts belong to their respective owners.</p>
+      <p><strong>No warranties:</strong> This tool is provided "as is" without warranties of any kind, either express or implied.</p>
+    </div>
   </div>
-</div>
-
-<script>
-function safeBack() {
-  if (window.history.length > 1) history.back();
-  else window.location.href = "/index.html";
-}
-</script>
-
+  <div class="footer"><p>© 2026 1079Magic — Created by Cro_Baby_Shark. <a href="privacy.html">Privacy & GDPR</a></p></div>
 </body>
-
 </html>
-
-
